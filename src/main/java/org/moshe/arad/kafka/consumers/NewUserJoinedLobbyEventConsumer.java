@@ -13,19 +13,15 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.kafka.KafkaUtils;
-import org.moshe.arad.kafka.events.BackgammonEvent;
-import org.moshe.arad.kafka.events.EventFactory;
-import org.moshe.arad.kafka.events.Events;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
+import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
-public class NewUserCreatedEventConsumer implements Runnable {
-
+public class NewUserJoinedLobbyEventConsumer  implements Runnable {
+	
 	@Autowired
 	private MongoEventsStore mongoEventsStore;
 	
@@ -33,21 +29,20 @@ public class NewUserCreatedEventConsumer implements Runnable {
 	private static final int CONSUMERS_NUM = 3;
 	private Properties properties;
 	
-	private Consumer<String, NewUserCreatedEvent> consumer;
+	private Consumer<String, NewUserJoinedLobbyEvent> consumer;
 	private boolean isRunning = true;
 	private ScheduledThreadPoolExecutor scheduledExecutor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(6);
 	
-	public NewUserCreatedEventConsumer() {
+	public NewUserJoinedLobbyEventConsumer() {
 		properties = new Properties();
 		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
 		properties.put("group.id", KafkaUtils.CREATE_NEW_USER_COMMAND_GROUP);
 		properties.put("key.deserializer", KafkaUtils.KEY_STRING_DESERIALIZER);
 		properties.put("value.deserializer", KafkaUtils.NEW_USER_CREATED_EVENT_DESERIALIZER);
-		properties.put("group.id", KafkaUtils.NEW_USER_CREATED_EVENT_GROUP);
 		consumer = new KafkaConsumer<>(properties);
 	}
 	
-	public NewUserCreatedEventConsumer(String customValueDeserializer, String groupName, Map<String,BackgammonUser> users, String topicName) {
+	public NewUserJoinedLobbyEventConsumer(String customValueDeserializer, String groupName, Map<String,BackgammonUser> users, String topicName) {
 		properties = new Properties();
 		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
 		properties.put("group.id", groupName);
@@ -74,12 +69,12 @@ public class NewUserCreatedEventConsumer implements Runnable {
 				consumer.subscribe(Arrays.asList(topicName));
 	    		
 	    		while (isRunning){
-	                ConsumerRecords<String, NewUserCreatedEvent> records = consumer.poll(100);
-	                for (ConsumerRecord<String, NewUserCreatedEvent> record : records){
-	                	logger.info("New User Created Event record recieved, " + record.value().getBackgammonUser());	             
+	                ConsumerRecords<String, NewUserJoinedLobbyEvent> records = consumer.poll(100);
+	                for (ConsumerRecord<String, NewUserJoinedLobbyEvent> record : records){
+	                	logger.info("New User Joined Lobby Event record recieved, " + record.value());	             
 	                	logger.info("Event recieved, try to put it in events store...");	                
-	                	BackgammonEvent newUserCreatedEvent = (NewUserCreatedEvent)record.value();
-	                	mongoEventsStore.addNewEvent(newUserCreatedEvent);
+	                	NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = (NewUserJoinedLobbyEvent)record.value();
+	                	mongoEventsStore.addNewEvent(newUserJoinedLobbyEvent);
 	                	logger.info("Event saved into events store successfully...");	                	
 	                }	              	             
 	    		}
@@ -107,8 +102,3 @@ public class NewUserCreatedEventConsumer implements Runnable {
 		return scheduledExecutor;
 	}	
 }
-
-
-
-
-	
