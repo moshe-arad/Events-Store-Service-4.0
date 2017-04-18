@@ -27,6 +27,18 @@ public abstract class BackgammonEvent {
 		this.arrived = new Date();
 	}
 
+	public BackgammonEvent(int serviceId, String serviceName, int entityId, String entityType, int eventId,
+			String eventType, Date arrived) {
+		super();
+		this.serviceId = serviceId;
+		this.serviceName = serviceName;
+		this.entityId = entityId;
+		this.entityType = entityType;
+		this.eventId = eventId;
+		this.eventType = eventType;
+		this.arrived = arrived;
+	}
+
 	@Override
 	public String toString() {
 		return "BackgammonEvent [serviceId=" + serviceId + ", serviceName=" + serviceName + ", entityId=" + entityId

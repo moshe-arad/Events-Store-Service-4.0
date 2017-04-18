@@ -1,7 +1,6 @@
 package org.moshe.arad.kafka.consumers;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -13,13 +12,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.moshe.arad.entities.BackgammonUser;
-import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.KafkaUtils;
-import org.moshe.arad.kafka.commands.CreateNewUserCommand;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EventFactory;
 import org.moshe.arad.kafka.events.Events;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
+import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class NewUserCreatedEventConsumer implements Runnable {
 
+	@Autowired
+	private MongoEventsStore mongoEventsStore;
+	
 	Logger logger = LoggerFactory.getLogger(NewUserCreatedEventConsumer.class);
 	private static final int CONSUMERS_NUM = 3;
 	private Properties properties;
@@ -49,9 +50,8 @@ public class NewUserCreatedEventConsumer implements Runnable {
 		properties = new Properties();
 		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
 		properties.put("group.id", groupName);
-		properties.put("key.deserializer", KafkaUtils.KEY_STRING_DESERIALIZER);
+		properties.put("key.deserializer", KafkaUtils.NEW_USER_CREATED_EVENT_DESERIALIZER);
 		properties.put("value.deserializer", customValueDeserializer);
-		this.users = users;
 		consumer = new KafkaConsumer<>(properties);
 	}
 
@@ -73,13 +73,13 @@ public class NewUserCreatedEventConsumer implements Runnable {
 				consumer.subscribe(Arrays.asList(topicName));
 	    		
 	    		while (isRunning){
-	                ConsumerRecords<String, CreateNewUserCommand> records = consumer.poll(100);
-	                for (ConsumerRecord<String, CreateNewUserCommand> record : records){
-	                	logger.info("Create New User Command record recieved, " + record.value().getBackgammonUser());
-	                	users.put(record.value().getBackgammonUser().getUserName(), record.value().getBackgammonUser());	            
-	                	BackgammonEvent newUserCreatedEvent = EventFactory.getEvent(Events.NewUserCreatedEvent, record.value().getBackgammonUser());
-	                	consumerToProducerQueue.getEventsQueue().put(newUserCreatedEvent);
-	                	logger.info("users size is = " + users.size());
+	                ConsumerRecords<String, NewUserCreatedEvent> records = consumer.poll(100);
+	                for (ConsumerRecord<String, NewUserCreatedEvent> record : records){
+	                	logger.info("New User Created Event record recieved, " + record.value().getBackgammonUser());	             
+	                	logger.info("Event recieved, try to put it in events store...");	                
+	                	BackgammonEvent newUserCreatedEvent = (NewUserCreatedEvent)record.value();
+	                	mongoEventsStore.addNewEvent(newUserCreatedEvent);
+	                	logger.info("Event saved into events store successfully...");	                	
 	                }	              	             
 	    		}
 		        consumer.close();
@@ -91,15 +91,7 @@ public class NewUserCreatedEventConsumer implements Runnable {
 	
 	@Override
 	public void run() {
-		this.executeConsumers(CONSUMERS_NUM, KafkaUtils.COMMANDS_TO_USERS_SERVICE_TOPIC);
-	}
-	
-	public Map<String, BackgammonUser> getUsers() {
-		return users;
-	}
-
-	public void setUsers(Map<String, BackgammonUser> users) {
-		this.users = users;
+		this.executeConsumers(CONSUMERS_NUM, KafkaUtils.NEW_USER_CREATED_EVENT_TOPIC);
 	}
 
 	public boolean isRunning() {

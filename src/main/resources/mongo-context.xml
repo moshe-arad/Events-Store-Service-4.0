@@ -5,6 +5,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.10.xsd">
 
+	<mongo:template db-factory-ref="mongoDbFactory"/>
 
-	<mongo:mongo-client id="mongoClient" credentials="arad:arad123@backgammon"></mongo:mongo-client>
+	<mongo:db-factory  id="mongoDbFactory" client-uri="mongodb://arad:arad123@localhost:27017/backgammon"/>
 </beans>
