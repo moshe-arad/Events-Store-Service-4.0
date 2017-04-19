@@ -8,10 +8,13 @@ public class EventFactory {
 	
 	public static BackgammonEvent getEvent(Events event, BackgammonUser backgammonUser, Date arrived){
 		if(event.equals(Events.NewUserCreatedEvent)){
-			return new NewUserCreatedEvent(1, "UsersService", 1, "Users", 1000, Events.NewUserCreatedEvent.name(), backgammonUser);
+			return new NewUserCreatedEvent(1, "UsersService", 1, "Users", 1, Events.NewUserCreatedEvent.name(), backgammonUser);
 		}
 		else if(event.equals(Events.NewUserCreatedEventWithSameDate)){
 			return new NewUserCreatedEvent(1, "UsersService", 1, "Users", 1, Events.NewUserCreatedEvent.name(), backgammonUser, arrived);
+		}
+		if(event.equals(Events.NewUserJoinedLobbyEvent)){
+			return new NewUserJoinedLobbyEvent(2, "LobbyService", 1, "Users", 2, Events.NewUserJoinedLobbyEvent.name(), backgammonUser);
 		}
 		else return null;
 	}

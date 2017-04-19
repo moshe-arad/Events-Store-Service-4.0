@@ -40,7 +40,6 @@ public class NewUserCreatedEventConsumer implements Runnable {
 	public NewUserCreatedEventConsumer() {
 		properties = new Properties();
 		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
-		properties.put("group.id", KafkaUtils.CREATE_NEW_USER_COMMAND_GROUP);
 		properties.put("key.deserializer", KafkaUtils.KEY_STRING_DESERIALIZER);
 		properties.put("value.deserializer", KafkaUtils.NEW_USER_CREATED_EVENT_DESERIALIZER);
 		properties.put("group.id", KafkaUtils.NEW_USER_CREATED_EVENT_GROUP);
@@ -69,7 +68,7 @@ public class NewUserCreatedEventConsumer implements Runnable {
 			
 			if(scheduledExecutor.getActiveCount() == numConsumers) continue;
 			
-			logger.info("Threads in pool's queue before schedule = " + scheduledExecutor.getQueue().size());
+//			logger.info("Threads in pool's queue before schedule = " + scheduledExecutor.getQueue().size());
 			scheduledExecutor.scheduleAtFixedRate( () -> {
 				consumer.subscribe(Arrays.asList(topicName));
 	    		
@@ -86,7 +85,7 @@ public class NewUserCreatedEventConsumer implements Runnable {
 		        consumer.close();
 		        
 			} , 0, 100, TimeUnit.MILLISECONDS);
-			logger.info("Threads in pool's queue after schedule = " + scheduledExecutor.getQueue().size());
+//			logger.info("Threads in pool's queue after schedule = " + scheduledExecutor.getQueue().size());
 		}
 	}
 	

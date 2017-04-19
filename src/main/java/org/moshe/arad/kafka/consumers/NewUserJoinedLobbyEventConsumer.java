@@ -13,13 +13,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.kafka.KafkaUtils;
-import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NewUserJoinedLobbyEventConsumer  implements Runnable {
 	
 	@Autowired
@@ -36,18 +37,9 @@ public class NewUserJoinedLobbyEventConsumer  implements Runnable {
 	public NewUserJoinedLobbyEventConsumer() {
 		properties = new Properties();
 		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
-		properties.put("group.id", KafkaUtils.CREATE_NEW_USER_COMMAND_GROUP);
+		properties.put("group.id", "NewUserJoinedLobbyEventConsumer");
 		properties.put("key.deserializer", KafkaUtils.KEY_STRING_DESERIALIZER);
-		properties.put("value.deserializer", KafkaUtils.NEW_USER_CREATED_EVENT_DESERIALIZER);
-		consumer = new KafkaConsumer<>(properties);
-	}
-	
-	public NewUserJoinedLobbyEventConsumer(String customValueDeserializer, String groupName, Map<String,BackgammonUser> users, String topicName) {
-		properties = new Properties();
-		properties.put("bootstrap.servers", KafkaUtils.SERVERS);
-		properties.put("group.id", groupName);
-		properties.put("key.deserializer", KafkaUtils.NEW_USER_CREATED_EVENT_DESERIALIZER);
-		properties.put("value.deserializer", customValueDeserializer);
+		properties.put("value.deserializer", KafkaUtils.NEW_USER_JOINED_LOBBY_EVENT_DESERIALIZER);
 		consumer = new KafkaConsumer<>(properties);
 	}
 
@@ -64,7 +56,7 @@ public class NewUserJoinedLobbyEventConsumer  implements Runnable {
 			
 			if(scheduledExecutor.getActiveCount() == numConsumers) continue;
 			
-			logger.info("Threads in pool's queue before schedule = " + scheduledExecutor.getQueue().size());
+//			logger.info("Threads in pool's queue before schedule = " + scheduledExecutor.getQueue().size());
 			scheduledExecutor.scheduleAtFixedRate( () -> {
 				consumer.subscribe(Arrays.asList(topicName));
 	    		
@@ -81,13 +73,13 @@ public class NewUserJoinedLobbyEventConsumer  implements Runnable {
 		        consumer.close();
 		        
 			} , 0, 100, TimeUnit.MILLISECONDS);
-			logger.info("Threads in pool's queue after schedule = " + scheduledExecutor.getQueue().size());
+//			logger.info("Threads in pool's queue after schedule = " + scheduledExecutor.getQueue().size());
 		}
 	}
 	
 	@Override
 	public void run() {
-		this.executeConsumers(CONSUMERS_NUM, KafkaUtils.NEW_USER_CREATED_EVENT_TOPIC);
+		this.executeConsumers(CONSUMERS_NUM, KafkaUtils.NEW_USER_JOINED_LOBBY_EVENT_TOPIC);
 	}
 
 	public boolean isRunning() {
