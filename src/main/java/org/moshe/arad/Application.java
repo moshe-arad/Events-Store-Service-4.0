@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class Application implements ApplicationRunner {
 
 	@Autowired
-	private EventsStoreService eventsStoreService;
+	private AppInit eventsStoreService;
 	
 	private Logger logger = LoggerFactory.getLogger(Application.class);
 	

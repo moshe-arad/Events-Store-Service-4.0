@@ -4,13 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.entities.Location;
-import org.moshe.arad.kafka.events.EventFactory;
-import org.moshe.arad.kafka.events.Events;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 
 public class NewUserJoinedLobbyEventDeserializer implements Deserializer<NewUserJoinedLobbyEvent>{
@@ -46,10 +45,12 @@ public class NewUserJoinedLobbyEventDeserializer implements Deserializer<NewUser
             String email = deserializeString(buf); 
             String location = deserializeString(buf); 
             Date date = new Date(buf.getLong());
+            UUID uuid = new UUID(buf.getLong(), buf.getLong());
             
-            return (NewUserJoinedLobbyEvent) EventFactory.getEvent(Events.NewUserJoinedLobbyEvent, 
-            		new BackgammonUser(userName, password, firstName, lastName, email, Location.valueOf(location)), 
-            		date);
+            NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = new NewUserJoinedLobbyEvent(uuid, 
+            		2, "Lobby Service", 1, "User", 2, "NewUserJoinedLobbyEvent", date, new BackgammonUser(userName, password, firstName, lastName, email, Location.valueOf(location)));
+            
+            return newUserJoinedLobbyEvent;
             	            		           
             
         } catch (Exception e) {

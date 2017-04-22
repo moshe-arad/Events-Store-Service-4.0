@@ -14,4 +14,5 @@ public class KafkaUtils {
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_TOPIC = "New-User-Joined-Lobby-Event";
 	public static final String NEW_USER_CREATED_EVENT_GROUP = "NewUserCreatedEventGroup1";
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_DESERIALIZER = "org.moshe.arad.kafka.deserializers.NewUserJoinedLobbyEventDeserializer";
+	public static final String NEW_USER_JOINED_LOBBY_EVENT_GROUP = "NewUserJoinedLobbyEventGroup";
 }
