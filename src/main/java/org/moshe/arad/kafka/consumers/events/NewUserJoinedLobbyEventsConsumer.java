@@ -1,7 +1,7 @@
 package org.moshe.arad.kafka.consumers.events;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
+import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;

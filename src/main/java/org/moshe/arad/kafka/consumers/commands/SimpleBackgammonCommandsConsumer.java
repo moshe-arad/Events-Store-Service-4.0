@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.consumers.events;
+package org.moshe.arad.kafka.consumers.commands;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -9,6 +9,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.moshe.arad.kafka.commands.Commandable;
 import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.slf4j.Logger;
@@ -22,9 +23,9 @@ import org.slf4j.LoggerFactory;
  * 
  * important to set properties and topic before usage
  */
-public abstract class SimpleBackgammonEventsConsumer <T extends BackgammonEvent> implements Runnable {
+public abstract class SimpleBackgammonCommandsConsumer <T extends Commandable> implements Runnable {
 
-	Logger logger = LoggerFactory.getLogger(SimpleBackgammonEventsConsumer.class);
+	Logger logger = LoggerFactory.getLogger(SimpleBackgammonCommandsConsumer.class);
 	private static final int CONSUMERS_NUM = 3;
 	
 	private Consumer<String, T> consumer;
@@ -33,10 +34,10 @@ public abstract class SimpleBackgammonEventsConsumer <T extends BackgammonEvent>
 	private String topic;
 	private SimpleConsumerConfig simpleConsumerConfig;
 	
-	public SimpleBackgammonEventsConsumer() {
+	public SimpleBackgammonCommandsConsumer() {
 	}
 	
-	public SimpleBackgammonEventsConsumer(SimpleConsumerConfig simpleConsumerConfig, String topic) {
+	public SimpleBackgammonCommandsConsumer(SimpleConsumerConfig simpleConsumerConfig, String topic) {
 		this.simpleConsumerConfig = simpleConsumerConfig;
 		consumer = new KafkaConsumer<String,T>(simpleConsumerConfig.getProperties());
 		this.topic = topic;

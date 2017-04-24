@@ -15,4 +15,8 @@ public class KafkaUtils {
 	public static final String NEW_USER_CREATED_EVENT_GROUP = "NewUserCreatedEventGroup1";
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_DESERIALIZER = "org.moshe.arad.kafka.deserializers.NewUserJoinedLobbyEventDeserializer";
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_GROUP = "NewUserJoinedLobbyEventGroup";
+	public static final String FROM_MONGO_TO_USERS_SERVICES = "From-Mongo-To-Users-Service";
+	public static final String PULL_EVENTS_COMMAND_TOPIC = "Pull-Events-Command";
+	public static final String PULL_EVENTS_COMMAND_GROUP = "PullEventsCommandGroup";
+	public static final String PULL_EVENTS_COMMAND_DESERIALIZER = "org.moshe.arad.kafka.deserializers.PullEventsCommandDeserializer";	
 }
