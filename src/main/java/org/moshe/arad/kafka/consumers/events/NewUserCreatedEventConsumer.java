@@ -30,7 +30,7 @@ public class NewUserCreatedEventConsumer extends SimpleBackgammonEventsConsumer<
     	try{
     		logger.info("New User Created Event record recieved, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	BackgammonEvent newUserCreatedEvent = (NewUserCreatedEvent)record.value();
+        	NewUserCreatedEvent newUserCreatedEvent = (NewUserCreatedEvent)record.value();
         	mongoEventsStore.addNewEvent(newUserCreatedEvent);
         	logger.info("Event saved into events store successfully...");
     	}

@@ -7,40 +7,33 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection="events")
+@Document
 public class MongoEvent {
 
 	@Id
 	private String mongoEventId;
-	
-	@Field(value="createdDate")
-	private Date createdDate;
-	
-	@Field(value="arrivedDate")
-	private Date arrivedDate;
-	
-	@Field(value="eventId")
-	private int eventId;
-	
 	private UUID uuid;
+	private int serviceId;
+	private int eventId;
+	private Date arrived;
 	
 	public MongoEvent() {
 	
 	}
 
-	public MongoEvent(String mongoEventId, Date createdDate, Date arrivedDate, int eventId, UUID uuid) {
+	public MongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived) {
 		super();
 		this.mongoEventId = mongoEventId;
-		this.createdDate = createdDate;
-		this.arrivedDate = arrivedDate;
-		this.eventId = eventId;
 		this.uuid = uuid;
+		this.serviceId = serviceId;
+		this.eventId = eventId;
+		this.arrived = arrived;
 	}
 
 	@Override
 	public String toString() {
-		return "MongoEvent [mongoEventId=" + mongoEventId + ", createdDate=" + createdDate + ", arrivedDate="
-				+ arrivedDate + ", eventId=" + eventId + ", uuid=" + uuid + "]";
+		return "MongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId=" + serviceId + ", eventId="
+				+ eventId + ", arrived=" + arrived + "]";
 	}
 
 	public String getMongoEventId() {
@@ -51,20 +44,20 @@ public class MongoEvent {
 		this.mongoEventId = mongoEventId;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public int getServiceId() {
+		return serviceId;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setServiceId(int serviceId) {
+		this.serviceId = serviceId;
 	}
 
-	public Date getArrivedDate() {
-		return arrivedDate;
+	public Date getArrived() {
+		return arrived;
 	}
 
-	public void setArrivedDate(Date arrivedDate) {
-		this.arrivedDate = arrivedDate;
+	public void setArrived(Date arrived) {
+		this.arrived = arrived;
 	}
 
 	public int getEventId() {
