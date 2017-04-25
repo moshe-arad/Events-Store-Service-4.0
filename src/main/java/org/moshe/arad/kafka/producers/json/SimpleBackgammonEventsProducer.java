@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.producers;
+package org.moshe.arad.kafka.producers.json;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -9,11 +9,13 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.events.BackgammonEvent;
-import org.moshe.arad.kafka.producers.config.SimpleProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * 
  * @author moshe-arad
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope("prototype")
-public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implements SimpleProducer, Runnable {
+public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implements SimpleProducer<T>, Runnable {
 
 	private final Logger logger = LoggerFactory.getLogger(SimpleBackgammonEventsProducer.class);
 	
@@ -45,7 +47,7 @@ public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implemen
 	}
 	
 	@Override
-    public void sendKafkaMessage(BackgammonEvent event){
+    public void sendKafkaMessage(T event){
 		try{
 			logger.info("Front Service is about to send a Command to topic=" + topic + ", Event=" + event);
 			sendMessage(event);
@@ -58,19 +60,33 @@ public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implemen
 		}
 	}
 	
-	private void sendMessage(BackgammonEvent event){
+	private void sendMessage(T event){
 		logger.info("Creating kafka producer.");
-		Producer<String, BackgammonEvent> producer = new KafkaProducer<>(simpleProducerConfig.getProperties());
+		Producer<String, String> producer = new KafkaProducer<>(simpleProducerConfig.getProperties());
 		logger.info("Kafka producer created.");
 		
 		logger.info("Sending message to topic = " + topic + ", message = " + event.toString() + ".");
-		ProducerRecord<String, BackgammonEvent> record = new ProducerRecord<String, BackgammonEvent>(topic, event);
+		String eventJsonBlob = convertEventToJsonBlob(event);
+		logger.info("Sending message to topic = " + topic + ", JSON message = " + eventJsonBlob + ".");
+		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, eventJsonBlob);
 		producer.send(record);
 		logger.info("Message sent.");
 		producer.close();
 		logger.info("Kafka producer closed.");
 	}
 
+	private String convertEventToJsonBlob(T event){
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.writeValueAsString(event);
+		} catch (JsonProcessingException e) {
+			logger.error("Failed convert event into JSON blob...");
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void takeMessagesFromConsumersAndPass(int numJobs){
 		while(scheduledExecutor.getQueue().size() < numJobs){

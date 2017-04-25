@@ -1,5 +1,7 @@
 package org.moshe.arad.mongo.events;
 
+import java.util.UUID;
+
 import org.moshe.arad.entities.Location;
 import org.springframework.data.mongodb.core.mapping.Document;
 

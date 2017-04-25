@@ -15,8 +15,6 @@ import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 
 public class PullEventsCommandDeserializer implements Deserializer<PullEventsCommand>{
 
-private String encoding = "UTF8";
-	
 	@Override
 	public void close() {
 		// TODO Auto-generated method stub
@@ -24,29 +22,49 @@ private String encoding = "UTF8";
 	}
 
 	@Override
-	public void configure(Map<String, ?> paramMap, boolean paramBoolean) {
+	public void configure(Map<String, ?> arg0, boolean arg1) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public PullEventsCommand deserialize(String topic, byte[] data) {
-		try {
-            if (data == null){
-                System.out.println("Null recieved at deserialize");
-                return null;
-            }
-            
-            ByteBuffer buf = ByteBuffer.wrap(data);         
-      
-            UUID uuid = new UUID(buf.getLong(), buf.getLong());
-            Date date = new Date(buf.getLong());
-                  
-            PullEventsCommand pullEventsCommand = new PullEventsCommand(uuid, date);         
-            return pullEventsCommand;	            		           
-            
-        } catch (Exception e) {
-            throw new SerializationException("Error when deserializing byte[] to PullEventsCommand");
-        }
+	public PullEventsCommand deserialize(String arg0, byte[] arg1) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+//private String encoding = "UTF8";
+//	
+//	@Override
+//	public void close() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public void configure(Map<String, ?> paramMap, boolean paramBoolean) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+//
+//	@Override
+//	public PullEventsCommand deserialize(String topic, byte[] data) {
+//		try {
+//            if (data == null){
+//                System.out.println("Null recieved at deserialize");
+//                return null;
+//            }
+//            
+//            ByteBuffer buf = ByteBuffer.wrap(data);         
+//      
+//            UUID uuid = new UUID(buf.getLong(), buf.getLong());
+//            Date date = new Date(buf.getLong());
+//                  
+//            PullEventsCommand pullEventsCommand = new PullEventsCommand(uuid, date);         
+//            return pullEventsCommand;	            		           
+//            
+//        } catch (Exception e) {
+//            throw new SerializationException("Error when deserializing byte[] to PullEventsCommand");
+//        }
+//	}
 }

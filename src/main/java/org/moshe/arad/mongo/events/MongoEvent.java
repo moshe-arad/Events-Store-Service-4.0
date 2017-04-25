@@ -1,6 +1,7 @@
 package org.moshe.arad.mongo.events;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,21 +22,25 @@ public class MongoEvent {
 	@Field(value="eventId")
 	private int eventId;
 	
+	private UUID uuid;
+	
 	public MongoEvent() {
 	
 	}
-	
-	public MongoEvent(String mongoEventId, Date createdDate, Date arrivedDate, int eventId) {
+
+	public MongoEvent(String mongoEventId, Date createdDate, Date arrivedDate, int eventId, UUID uuid) {
+		super();
 		this.mongoEventId = mongoEventId;
 		this.createdDate = createdDate;
 		this.arrivedDate = arrivedDate;
 		this.eventId = eventId;
+		this.uuid = uuid;
 	}
 
 	@Override
 	public String toString() {
 		return "MongoEvent [mongoEventId=" + mongoEventId + ", createdDate=" + createdDate + ", arrivedDate="
-				+ arrivedDate + ", eventId=" + eventId + "]";
+				+ arrivedDate + ", eventId=" + eventId + ", uuid=" + uuid + "]";
 	}
 
 	public String getMongoEventId() {
@@ -68,5 +73,13 @@ public class MongoEvent {
 
 	public void setEventId(int eventId) {
 		this.eventId = eventId;
+	}
+
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
 	}	
 }

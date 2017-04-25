@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.producers.config;
+package org.moshe.arad.kafka.producers.json;
 
 import java.util.Properties;
 

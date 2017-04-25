@@ -4,10 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
-import org.moshe.arad.kafka.events.UserEmailAvailabilityCheckedEvent;
 
 public class FromMongoToUsersServiceDeserializer implements Serializer<BackgammonEvent> {
 
@@ -35,7 +33,7 @@ public class FromMongoToUsersServiceDeserializer implements Serializer<Backgammo
 			 if (event == null)
 				 return null;
             
-			 serializedIsAvailable[0] = ((byte)(event.isAvailable() ? 1 : 0));	
+//			 serializedIsAvailable[0] = ((byte)(event.isAvailable() ? 1 : 0));	
 			 highUuid = event.getUuid().getMostSignificantBits();
 			 lowUuid = event.getUuid().getLeastSignificantBits();
 			 

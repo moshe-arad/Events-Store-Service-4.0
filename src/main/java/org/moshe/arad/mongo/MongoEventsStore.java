@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
+import org.moshe.arad.mongo.events.MongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +41,31 @@ public class MongoEventsStore {
 		
 	}
 	
-	public LinkedList<BackgammonEvent> getEventsOccuredFrom(Date fromDate){
-		Criteria criteria = Criteria.where("arrived").gte(fromDate);
-		Query query = new Query(criteria).with(new Sort(new Order(Direction.ASC, "arrived")));
-		LinkedList<BackgammonEvent> result = new LinkedList<>(mongoTemplate.find(query, BackgammonEvent.class));
-		result.addFirst(new NewUserCreatedEvent(null, -1, "", -1, "", -1, "", null));
-		result.addLast(new NewUserCreatedEvent(null, -1, "", -1, "", -1, "", null));
+	public LinkedList<MongoEvent> getEventsOccuredFrom(Date fromDate){
+		LinkedList<MongoEvent> result;
+		
+		if(fromDate == null){
+			result = new LinkedList<>(mongoTemplate.findAll(MongoEvent.class));
+//			result.add(mongoTemplate.findOne(new Query().addCriteria(new Criteria().where("eventType").is("NewUserCreatedEvent")), NewUserCreatedEvent.class));
+		}
+		else{
+			Criteria criteria = Criteria.where("arrived").gte(fromDate);
+			Query query = new Query(criteria).with(new Sort(new Order(Direction.ASC, "arrived")));
+			result = new LinkedList<>(mongoTemplate.find(query, MongoEvent.class));
+		}
+				
+		result.addFirst(new MongoEvent("begin", null, null, -1));
+		result.addLast(new MongoEvent("end", null, null, -1));
 		
 		return result;
+	}
+	
+	private BackgammonEvent convertTo(MongoEvent mongoEvent){
+		if(mongoEvent.getClass().equals(org.moshe.arad.mongo.events.NewUserCreatedEvent.class)){
+			org.moshe.arad.mongo.events.NewUserCreatedEvent newUserCreatedEventMongo = (org.moshe.arad.mongo.events.NewUserCreatedEvent)mongoEvent; 
+			NewUserCreatedEvent newUserCreatedEvent = new NewUserCreatedEvent(newUserCreatedEventMongo.getUuid(), 
+					newUserCreatedEventMongo.get, serviceName, entityId, entityType, eventId, eventType, arrived, backgammonUser)
+		}
 	}
 }
 
