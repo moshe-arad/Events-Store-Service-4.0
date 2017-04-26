@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.consumers;
+package org.moshe.arad.kafka.consumers.config;
 
 import java.util.Properties;
 

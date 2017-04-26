@@ -10,7 +10,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
-import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
+import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * 
  * important to set properties and topic before usage
  */
-public abstract class SimpleEventsConsumer implements Runnable, ISimpleConsumer {
+public abstract class SimpleEventsConsumer implements Runnable, ISimpleEventConsumer {
 
 	Logger logger = LoggerFactory.getLogger(SimpleEventsConsumer.class);
 	private static final int CONSUMERS_NUM = 3;
