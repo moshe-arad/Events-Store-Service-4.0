@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.consumers.json;
+package org.moshe.arad.kafka.consumers.events;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
@@ -9,7 +9,7 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.moshe.arad.kafka.commands.Commandable;
+import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.slf4j.Logger;
@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
  * 
  * important to set properties and topic before usage
  */
-public abstract class SimpleBackgammonCommandsConsumer implements Runnable {
+public abstract class SimpleEventsConsumer implements Runnable, ISimpleConsumer {
 
-	Logger logger = LoggerFactory.getLogger(SimpleBackgammonCommandsConsumer.class);
+	Logger logger = LoggerFactory.getLogger(SimpleEventsConsumer.class);
 	private static final int CONSUMERS_NUM = 3;
 	
 	private Consumer<String, String> consumer;
@@ -34,13 +34,7 @@ public abstract class SimpleBackgammonCommandsConsumer implements Runnable {
 	private String topic;
 	private SimpleConsumerConfig simpleConsumerConfig;
 	
-	public SimpleBackgammonCommandsConsumer() {
-	}
-	
-	public SimpleBackgammonCommandsConsumer(SimpleConsumerConfig simpleConsumerConfig, String topic) {
-		this.simpleConsumerConfig = simpleConsumerConfig;
-		consumer = new KafkaConsumer<String,String>(simpleConsumerConfig.getProperties());
-		this.topic = topic;
+	public SimpleEventsConsumer() {
 	}
 
 	private void executeConsumers(int numConsumers){
@@ -50,7 +44,6 @@ public abstract class SimpleBackgammonCommandsConsumer implements Runnable {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			

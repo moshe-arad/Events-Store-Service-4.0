@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.producers.json;
+package org.moshe.arad.kafka.producers;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -26,9 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 @Scope("prototype")
-public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implements SimpleProducer<T>, Runnable {
+public class SimpleEventsProducer <T extends BackgammonEvent> implements ISimpleProducer<T>, Runnable {
 
-	private final Logger logger = LoggerFactory.getLogger(SimpleBackgammonEventsProducer.class);
+	private final Logger logger = LoggerFactory.getLogger(SimpleEventsProducer.class);
 	
 	private SimpleProducerConfig simpleProducerConfig;
 	
@@ -38,10 +38,10 @@ public class SimpleBackgammonEventsProducer <T extends BackgammonEvent> implemen
 	private static final int PRODUCERS_NUM = 3;
 	private String topic;
 	
-	public SimpleBackgammonEventsProducer() {
+	public SimpleEventsProducer() {
 	}
 	
-	public SimpleBackgammonEventsProducer(SimpleProducerConfig simpleProducerConfig, String topic) {
+	public SimpleEventsProducer(SimpleProducerConfig simpleProducerConfig, String topic) {
 		this.simpleProducerConfig = simpleProducerConfig;
 		this.topic = topic;
 	}

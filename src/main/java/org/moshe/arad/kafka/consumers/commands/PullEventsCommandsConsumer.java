@@ -1,4 +1,4 @@
-package org.moshe.arad.kafka.consumers.json;
+package org.moshe.arad.kafka.consumers.commands;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.commands.PullEventsCommand;
+import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class PullEventsCommandsConsumer extends SimpleBackgammonCommandsConsumer {
+public class PullEventsCommandsConsumer extends SimpleCommandsConsumer implements ISimpleConsumer {
 	
 	@Autowired
 	private MongoEventsStore mongoEventsStore;
@@ -30,10 +31,6 @@ public class PullEventsCommandsConsumer extends SimpleBackgammonCommandsConsumer
 	Logger logger = LoggerFactory.getLogger(PullEventsCommandsConsumer.class);
 	
 	public PullEventsCommandsConsumer() {
-	}
-	
-	public PullEventsCommandsConsumer(SimpleConsumerConfig simpleConsumerConfig, String topic) {
-		super(simpleConsumerConfig, topic);
 	}
 
 	@Override

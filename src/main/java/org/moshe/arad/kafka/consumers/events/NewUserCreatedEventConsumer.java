@@ -1,8 +1,9 @@
 package org.moshe.arad.kafka.consumers.events;
 
+import java.io.IOException;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.moshe.arad.kafka.consumers.SimpleConsumerConfig;
-import org.moshe.arad.kafka.events.BackgammonEvent;
+import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
@@ -10,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Component
-public class NewUserCreatedEventConsumer extends SimpleBackgammonEventsConsumer<NewUserCreatedEvent> {
+public class NewUserCreatedEventConsumer extends SimpleEventsConsumer {
 	
 	@Autowired
 	private MongoEventsStore mongoEventsStore;
@@ -20,17 +23,13 @@ public class NewUserCreatedEventConsumer extends SimpleBackgammonEventsConsumer<
 	
 	public NewUserCreatedEventConsumer() {
 	}
-	
-	public NewUserCreatedEventConsumer(SimpleConsumerConfig simpleConsumerConfig, String topic) {
-		super(simpleConsumerConfig, topic);
-	}
 
 	@Override
-	public void consumerOperations(ConsumerRecord<String,NewUserCreatedEvent> record) {
+	public void consumerOperations(ConsumerRecord<String,String> record) {
     	try{
+    		NewUserCreatedEvent newUserCreatedEvent = convertJsonBlobIntoEvent(record.value());    		
     		logger.info("New User Created Event record recieved, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	NewUserCreatedEvent newUserCreatedEvent = (NewUserCreatedEvent)record.value();
         	mongoEventsStore.addNewEvent(newUserCreatedEvent);
         	logger.info("Event saved into events store successfully...");
     	}
@@ -39,7 +38,25 @@ public class NewUserCreatedEventConsumer extends SimpleBackgammonEventsConsumer<
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
-	}	
+	}
+	
+	private NewUserCreatedEvent convertJsonBlobIntoEvent(String JsonBlob){
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			return objectMapper.readValue(JsonBlob, NewUserCreatedEvent.class);
+		} catch (IOException e) {
+			logger.error("Falied to convert Json blob into Event...");
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public void setConsumerToProducerQueue(ConsumerToProducerQueue consumerToProducerQueue) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 
