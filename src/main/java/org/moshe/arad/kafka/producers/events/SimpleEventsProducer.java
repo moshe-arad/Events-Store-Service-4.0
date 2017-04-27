@@ -51,12 +51,12 @@ public class SimpleEventsProducer <T extends BackgammonEvent> implements ISimple
 	@Override
     public void sendKafkaMessage(T event){
 		try{
-			logger.info("Front Service is about to send a Command to topic=" + topic + ", Event=" + event);
+			logger.info("Events store Service is about to send a Command to topic=" + topic + ", Event=" + event);
 			sendMessage(event);
-			logger.info("Message sent successfully, Front Service sent a Command to topic=" + topic + ", Event=" + event);
+			logger.info("Message sent successfully, Events store sent a Command to topic=" + topic + ", Event=" + event);
 		}
 		catch(Exception ex){
-			logger.error("Failed to sent message, Front Service failed to send a Command to topic=" + topic + ", Event=" + event);
+			logger.error("Failed to sent message, Events store failed to send a Command to topic=" + topic + ", Event=" + event);
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}

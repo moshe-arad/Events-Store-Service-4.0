@@ -55,8 +55,8 @@ public class PullEventsCommandsConsumer extends SimpleCommandsConsumer implement
         	logger.info("Initiating request to mongo events store in order to get existing events in events store which occured from date = " + fromDate.toString());
         	//TODO consumer always be responsible to pass data from himself to producer
         	LinkedList<BackgammonEvent> eventsFromMongoToProducer;
-        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(null));
-        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(fromDate));
+        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null));
+        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, fromDate));
         	logger.info("Events were extracted from mongo DB successfuly...");
         	
         	logger.info("Start passing events to producer...");
