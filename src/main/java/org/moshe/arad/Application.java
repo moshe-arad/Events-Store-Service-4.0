@@ -12,9 +12,11 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @ImportResource("classpath:/mongo-context.xml")
+@RestController
 public class Application implements ApplicationRunner {
 
 	@Autowired
@@ -33,7 +35,12 @@ public class Application implements ApplicationRunner {
 	
 	@RequestMapping("/shutdown")
 	public ResponseEntity<String> shutdown(){
-		return this.doShutdown();		
+		try{
+			return this.doShutdown();
+		}
+		finally {
+			System.exit(1);
+		}		
 	}
 	
 	private ResponseEntity<String> doShutdown(){

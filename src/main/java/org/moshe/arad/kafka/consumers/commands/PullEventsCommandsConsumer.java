@@ -9,18 +9,18 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.commands.PullEventsCommand;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
-import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
-import org.moshe.arad.mongo.events.MongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
+@Scope("prototype")
 public class PullEventsCommandsConsumer extends SimpleCommandsConsumer implements ISimpleConsumer {
 	
 	@Autowired
@@ -52,11 +52,13 @@ public class PullEventsCommandsConsumer extends SimpleCommandsConsumer implement
         	UUID uuid = pullEventsCommand.getUuid();
         	logger.info("UUID extracted successfully, UUID = " + uuid.toString());
         	
+        	boolean isToSaveEvents = pullEventsCommand.isToSaveEvents();
+        	
         	logger.info("Initiating request to mongo events store in order to get existing events in events store which occured from date = " + fromDate.toString());
         	//TODO consumer always be responsible to pass data from himself to producer
         	LinkedList<BackgammonEvent> eventsFromMongoToProducer;
-        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null));
-        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, fromDate));
+        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null, isToSaveEvents));
+        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, fromDate, isToSaveEvents));
         	logger.info("Events were extracted from mongo DB successfuly...");
         	
         	logger.info("Start passing events to producer...");

@@ -9,12 +9,12 @@ import org.moshe.arad.kafka.ConsumerToProducerQueue;
 import org.moshe.arad.kafka.KafkaUtils;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsCommandsConsumer;
+import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
+import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsCommandConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
-import org.moshe.arad.kafka.consumers.events.config.NewUserCreatedEventConfig;
-import org.moshe.arad.kafka.consumers.events.config.NewUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.config.SimpleProducerConfig;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppInit implements ApplicationContextAware, IAppInitializer {
 
-	@Autowired
+//	@Autowired
 	private NewUserCreatedEventConsumer newUserCreatedEventConsumer;
 	
 	@Autowired
@@ -42,7 +42,7 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private NewUserJoinedLobbyEventConfig newUserJoinedLobbyEventConfig;
 	
-	@Autowired
+//	@Autowired
 	private PullEventsCommandsConsumer pullEventsCommandsConsumer;	
 	
 	@Autowired
@@ -62,31 +62,41 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	
 	private ApplicationContext context;
 	
+	public static final int NUM_CONSUMERS = 3;
+	
 	public AppInit() {		
 	}
 	
 	@Override
 	public void initKafkaCommandsConsumers() {
 		pullEventsCommandsConsumerToProducerQueue = context.getBean(ConsumerToProducerQueue.class);
-				
-		logger.info("Initializing pull events commands consumer...");
-		initSingleConsumer(pullEventsCommandsConsumer, KafkaUtils.PULL_EVENTS_COMMAND_TOPIC, pullEventsCommandConfig, pullEventsCommandsConsumerToProducerQueue);
-		logger.info("Initializing pull events commands consumer...");
-		
-		executeProducersAndConsumers(Arrays.asList(pullEventsCommandsConsumer));
+
+		for(int i=0; i<NUM_CONSUMERS; i++){
+			pullEventsCommandsConsumer = context.getBean(PullEventsCommandsConsumer.class);
+			logger.info("Initializing pull events commands consumer...");
+			initSingleConsumer(pullEventsCommandsConsumer, KafkaUtils.PULL_EVENTS_COMMAND_TOPIC, pullEventsCommandConfig, pullEventsCommandsConsumerToProducerQueue);
+			logger.info("Initializing pull events commands consumer...");
+			
+			executeProducersAndConsumers(Arrays.asList(pullEventsCommandsConsumer));
+		}
 	}
 
 	@Override
-	public void initKafkaEventsConsumers() {		
-		logger.info("Initializing new user created events consumer...");
-		initSingleConsumer(newUserCreatedEventConsumer, KafkaUtils.NEW_USER_CREATED_EVENT_TOPIC, newUserCreatedEventConfig, null);
-		logger.info("Initialize new user created events consumer, completed...");
+	public void initKafkaEventsConsumers() {
 		
-		logger.info("Initializing new user joined lobby events consumer...");
-		initSingleConsumer(newUserJoinedLobbyEventConsumer, KafkaUtils.NEW_USER_JOINED_LOBBY_EVENT_TOPIC, newUserJoinedLobbyEventConfig, null);
-		logger.info("Initialize new user joined lobby events, completed...");
-		
-		executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, newUserJoinedLobbyEventConsumer));
+		for(int i=0; i<NUM_CONSUMERS; i++){
+			newUserCreatedEventConsumer = context.getBean(NewUserCreatedEventConsumer.class);
+			logger.info("Initializing new user created events consumer...");
+			initSingleConsumer(newUserCreatedEventConsumer, KafkaUtils.NEW_USER_CREATED_EVENT_TOPIC, newUserCreatedEventConfig, null);
+			logger.info("Initialize new user created events consumer, completed...");
+			
+			newUserJoinedLobbyEventConsumer = context.getBean(NewUserJoinedLobbyEventsConsumer.class);
+			logger.info("Initializing new user joined lobby events consumer...");
+			initSingleConsumer(newUserJoinedLobbyEventConsumer, KafkaUtils.NEW_USER_JOINED_LOBBY_EVENT_TOPIC, newUserJoinedLobbyEventConfig, null);
+			logger.info("Initialize new user joined lobby events, completed...");
+			
+			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, newUserJoinedLobbyEventConsumer));
+		}
 	}
 
 	@Override
