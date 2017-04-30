@@ -57,7 +57,7 @@ public class MongoEventsStore {
 		
 	}
 	
-	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, boolean isToSaveEvents){
+	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
 		LinkedList<org.moshe.arad.mongo.events.NewUserCreatedEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent> mongoEventsNewUserJoinedLobbyEvent = null;
 		ArrayList<org.moshe.arad.mongo.events.MongoEvent> mongoEvents = new ArrayList<>();
@@ -85,7 +85,7 @@ public class MongoEventsStore {
 		}
 		
 		int totalNumOfEvents = result.size();
-		result.addFirst(new StartReadEventsFromMongoEvent(uuid, 3, 5, new Date(), "StartReadEventsFromMongoEvent", totalNumOfEvents, isToSaveEvents)); 
+		result.addFirst(new StartReadEventsFromMongoEvent(uuid, 3, 5, new Date(), "StartReadEventsFromMongoEvent", totalNumOfEvents)); 
 		result.addLast(new EndReadEventsFromMongoEvent(uuid, 3, 6, new Date(), "EndReadEventsFromMongoEvent", totalNumOfEvents));
 		
 		return result;

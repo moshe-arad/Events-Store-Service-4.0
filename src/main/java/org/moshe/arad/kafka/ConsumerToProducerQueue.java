@@ -12,7 +12,7 @@ public class ConsumerToProducerQueue {
 
 	private static final int QUEUE_SIZE = 100000;
 	private PriorityBlockingQueue<BackgammonEvent> eventsQueue = new PriorityBlockingQueue<>(QUEUE_SIZE, 
-			(BackgammonEvent o1, BackgammonEvent o2) -> {return o1.getArrived().compareTo(o2.getArrived());});
+			(BackgammonEvent o1, BackgammonEvent o2) -> {return o2.getArrived().compareTo(o1.getArrived());});
 	
 	public PriorityBlockingQueue<BackgammonEvent> getEventsQueue() {
 		return eventsQueue;

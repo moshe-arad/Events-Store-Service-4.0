@@ -15,8 +15,11 @@ public class KafkaUtils {
 	public static final String NEW_USER_CREATED_EVENT_GROUP = "NewUserCreatedEventGroup1";
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_DESERIALIZER = "org.moshe.arad.kafka.deserializers.NewUserJoinedLobbyEventDeserializer";
 	public static final String NEW_USER_JOINED_LOBBY_EVENT_GROUP = "NewUserJoinedLobbyEventGroup";
-	public static final String FROM_MONGO_TO_USERS_SERVICES = "From-Mongo-To-Users-Service";
-	public static final String PULL_EVENTS_COMMAND_TOPIC = "Pull-Events-Command";
-	public static final String PULL_EVENTS_COMMAND_GROUP = "PullEventsCommandGroup";
+	public static final String FROM_MONGO_EVENTS_WITH_SAVING_TOPIC = "From-Mongo-Events-With-Saving";
+	public static final String FROM_MONGO_EVENTS_WITHOUT_SAVING_TOPIC = "From-Mongo-Events-Without-Saving";
+	public static final String PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC = "Pull-Events-With-Saving-Command";	
+	public static final String PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC = "Pull-Events-Without-Saving-Command";
+	public static final String PULL_EVENTS_WITH_SAVING_COMMAND_GROUP = "PullEventsWithSavingCommandGroup";
+	public static final String PULL_EVENTS_WITHOUT_SAVING_COMMAND_GROUP = "PullEventsWithoutSavingCommandGroup";
 	public static final String PULL_EVENTS_COMMAND_DESERIALIZER = "org.moshe.arad.kafka.deserializers.PullEventsCommandDeserializer";	
 }
