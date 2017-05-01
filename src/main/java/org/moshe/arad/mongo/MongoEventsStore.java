@@ -7,8 +7,10 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
+import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
@@ -57,6 +59,17 @@ public class MongoEventsStore {
 		
 	}
 	
+	public void addNewEvent(LoggedInEvent loggedInEvent) {
+		try{
+			mongoTemplate.insert(loggedInEvent, "loggedInEvents");
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save newUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
 		LinkedList<org.moshe.arad.mongo.events.NewUserCreatedEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent> mongoEventsNewUserJoinedLobbyEvent = null;
@@ -103,7 +116,7 @@ public class MongoEventsStore {
 			return newUserJoinedLobbyEvent;
 		}
 		return null;
-	}
+	}	
 }
 
 

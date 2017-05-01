@@ -21,5 +21,7 @@ public class KafkaUtils {
 	public static final String PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC = "Pull-Events-Without-Saving-Command";
 	public static final String PULL_EVENTS_WITH_SAVING_COMMAND_GROUP = "PullEventsWithSavingCommandGroup";
 	public static final String PULL_EVENTS_WITHOUT_SAVING_COMMAND_GROUP = "PullEventsWithoutSavingCommandGroup";
-	public static final String PULL_EVENTS_COMMAND_DESERIALIZER = "org.moshe.arad.kafka.deserializers.PullEventsCommandDeserializer";	
+	public static final String PULL_EVENTS_COMMAND_DESERIALIZER = "org.moshe.arad.kafka.deserializers.PullEventsCommandDeserializer";
+	public static final String LOGGED_IN_EVENT_GROUP = "LoggedInEventGroup1";
+	public static final String LOGGED_IN_EVENT_TOPIC = "Logged-In-Event";
 }
