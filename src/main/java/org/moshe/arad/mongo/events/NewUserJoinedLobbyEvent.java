@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.moshe.arad.entities.BackgammonUser;
-import org.moshe.arad.entities.Location;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="newUserJoinedLobbyEvents")
