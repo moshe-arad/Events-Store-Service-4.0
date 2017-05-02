@@ -17,6 +17,7 @@ public class NewUserCreatedMongoEvent implements IMongoEvent {
 	private int serviceId;
 	private int eventId;
 	private Date arrived;
+	private String clazz;
 	private BackgammonUser backgammonUser;
 
 	public NewUserCreatedMongoEvent() {
@@ -46,6 +47,7 @@ public class NewUserCreatedMongoEvent implements IMongoEvent {
 		newUserCreatedMongoEvent.setUuid(event.getUuid());
 		newUserCreatedMongoEvent.setArrived(event.getArrived());
 		newUserCreatedMongoEvent.setBackgammonUser(event.getBackgammonUser());
+		newUserCreatedMongoEvent.setClazz(event.getClazz());
 		
 		return newUserCreatedMongoEvent;
 	}
@@ -98,5 +100,13 @@ public class NewUserCreatedMongoEvent implements IMongoEvent {
 
 	public void setBackgammonUser(BackgammonUser backgammonUser) {
 		this.backgammonUser = backgammonUser;
+	}
+
+	public String getClazz() {
+		return clazz;
+	}
+
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
 	}
 }

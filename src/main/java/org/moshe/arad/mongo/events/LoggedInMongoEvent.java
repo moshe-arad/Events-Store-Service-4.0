@@ -17,6 +17,7 @@ public class LoggedInMongoEvent implements IMongoEvent {
 	private int serviceId;
 	private int eventId;
 	private Date arrived;
+	private String clazz;
 	private BackgammonUser backgammonUser;
 
 	public LoggedInMongoEvent() {
@@ -46,6 +47,7 @@ public class LoggedInMongoEvent implements IMongoEvent {
 		loggedInMongoEvent.setUuid(event.getUuid());
 		loggedInMongoEvent.setArrived(event.getArrived());
 		loggedInMongoEvent.setBackgammonUser(event.getBackgammonUser());
+		loggedInMongoEvent.setClazz(event.getClazz());
 		
 		return loggedInMongoEvent;
 	}
@@ -98,5 +100,13 @@ public class LoggedInMongoEvent implements IMongoEvent {
 
 	public void setBackgammonUser(BackgammonUser backgammonUser) {
 		this.backgammonUser = backgammonUser;
+	}
+
+	public String getClazz() {
+		return clazz;
+	}
+
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
 	}
 }

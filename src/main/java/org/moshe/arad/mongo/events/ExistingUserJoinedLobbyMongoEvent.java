@@ -17,37 +17,39 @@ public class ExistingUserJoinedLobbyMongoEvent implements IMongoEvent {
 	private int serviceId;
 	private int eventId;
 	private Date arrived;
+	private String clazz;
 	private BackgammonUser backgammonUser;
 
 	public ExistingUserJoinedLobbyMongoEvent() {
 	
 	}
-	
+
 	public ExistingUserJoinedLobbyMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
-			BackgammonUser backgammonUser) {
+			String clazz, BackgammonUser backgammonUser) {
 		super();
 		this.mongoEventId = mongoEventId;
 		this.uuid = uuid;
 		this.serviceId = serviceId;
 		this.eventId = eventId;
 		this.arrived = arrived;
+		this.clazz = clazz;
 		this.backgammonUser = backgammonUser;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "ExistingUserJoinedLobbyMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId="
-				+ serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", backgammonUser=" + backgammonUser
-				+ "]";
+				+ serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", backgammonUser="
+				+ backgammonUser + "]";
 	}
 
-	
 	public static ExistingUserJoinedLobbyMongoEvent convertIntoMongoEvent(ExistingUserJoinedLobbyEvent event) {
 		ExistingUserJoinedLobbyMongoEvent existingUserJoinedLobbyMongoEvent = new ExistingUserJoinedLobbyMongoEvent();
 		
 		existingUserJoinedLobbyMongoEvent.setUuid(event.getUuid());
 		existingUserJoinedLobbyMongoEvent.setArrived(event.getArrived());
 		existingUserJoinedLobbyMongoEvent.setBackgammonUser(event.getBackgammonUser());
+		existingUserJoinedLobbyMongoEvent.setClazz(event.getClazz());
 		
 		return existingUserJoinedLobbyMongoEvent;
 	}
@@ -100,5 +102,13 @@ public class ExistingUserJoinedLobbyMongoEvent implements IMongoEvent {
 
 	public void setBackgammonUser(BackgammonUser backgammonUser) {
 		this.backgammonUser = backgammonUser;
+	}
+
+	public String getClazz() {
+		return clazz;
+	}
+
+	public void setClazz(String clazz) {
+		this.clazz = clazz;
 	}
 }
