@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
-import org.moshe.arad.kafka.events.NewUserCreatedEvent;
+import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
+import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,23 +17,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @Scope("prototype")
-public class NewUserCreatedEventConsumer extends SimpleEventsConsumer {
-	
+public class ExistingUserJoinedLobbyEventConsumer extends SimpleEventsConsumer {
+
 	@Autowired
 	private MongoEventsStore mongoEventsStore;
 	
-	Logger logger = LoggerFactory.getLogger(NewUserCreatedEventConsumer.class);
+	Logger logger = LoggerFactory.getLogger(ExistingUserJoinedLobbyEventConsumer.class);
 	
-	public NewUserCreatedEventConsumer() {
+	public ExistingUserJoinedLobbyEventConsumer() {
 	}
 
 	@Override
 	public void consumerOperations(ConsumerRecord<String,String> record) {
     	try{
-    		NewUserCreatedEvent newUserCreatedEvent = convertJsonBlobIntoEvent(record.value());    		
-    		logger.info("New User Created Event record recieved, " + record.value());	             
-        	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addNewUserCreatedEvent(newUserCreatedEvent);
+    		ExistingUserJoinedLobbyEvent existingUserJoinedLobbyEvent = convertJsonBlobIntoEvent(record.value());
+    		logger.info("Existing User Joined Lobby Event record recieved, " + record.value());	             
+        	logger.info("Event recieved, try to put it in events store...");
+        	mongoEventsStore.addExistingUserJoinedLobbyEvent(existingUserJoinedLobbyEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {
@@ -42,10 +43,10 @@ public class NewUserCreatedEventConsumer extends SimpleEventsConsumer {
 		}
 	}
 	
-	private NewUserCreatedEvent convertJsonBlobIntoEvent(String JsonBlob){
+	private ExistingUserJoinedLobbyEvent convertJsonBlobIntoEvent(String JsonBlob){
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			return objectMapper.readValue(JsonBlob, NewUserCreatedEvent.class);
+			return objectMapper.readValue(JsonBlob, ExistingUserJoinedLobbyEvent.class);
 		} catch (IOException e) {
 			logger.error("Falied to convert Json blob into Event...");
 			logger.error(e.getMessage());
@@ -60,8 +61,3 @@ public class NewUserCreatedEventConsumer extends SimpleEventsConsumer {
 		
 	}
 }
-
-
-
-
-	

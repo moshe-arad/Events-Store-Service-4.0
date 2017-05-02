@@ -7,14 +7,18 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
+import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
-import org.moshe.arad.mongo.events.MongoEvent;
+import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
+import org.moshe.arad.mongo.events.IMongoEvent;
+import org.moshe.arad.mongo.events.LoggedInMongoEvent;
+import org.moshe.arad.mongo.events.NewUserCreatedMongoEvent;
+import org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +39,11 @@ public class MongoEventsStore {
 	
 	private Logger logger = LoggerFactory.getLogger(MongoEventsStore.class);
 	
-	public void addNewEvent(NewUserCreatedEvent newUserCreatedEvent){
+	public void addNewUserCreatedEvent(NewUserCreatedEvent newUserCreatedEvent){
 		try{
-			mongoTemplate.insert(newUserCreatedEvent, "newUserCreatedEvents");
+			NewUserCreatedMongoEvent newUserCreatedMongoEvent = NewUserCreatedMongoEvent.convertIntoMongoEvent(newUserCreatedEvent);
+			
+			mongoTemplate.insert(newUserCreatedMongoEvent, "newUserCreatedEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserCreatedEvent into mongo events store");
@@ -47,9 +53,11 @@ public class MongoEventsStore {
 		
 	}
 	
-	public void addNewEvent(NewUserJoinedLobbyEvent newUserJoinedLobbyEvent){
+	public void addNewUserJoinedLobbyEvent(NewUserJoinedLobbyEvent newUserJoinedLobbyEvent){
 		try{
-			mongoTemplate.insert(newUserJoinedLobbyEvent, "newUserJoinedLobbyEvents");
+			NewUserJoinedLobbyMongoEvent newUserJoinedLobbyMongoEvent = NewUserJoinedLobbyMongoEvent.convertIntoMongoEvent(newUserJoinedLobbyEvent);
+			
+			mongoTemplate.insert(newUserJoinedLobbyMongoEvent, "newUserJoinedLobbyEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserJoinedLobbyEvent into mongo events store");
@@ -59,39 +67,55 @@ public class MongoEventsStore {
 		
 	}
 	
-	public void addNewEvent(LoggedInEvent loggedInEvent) {
+	public void addLoggedInEvent(LoggedInEvent loggedInEvent) {
 		try{
-			mongoTemplate.insert(loggedInEvent, "loggedInEvents");
+			
+			LoggedInMongoEvent loggedInMongoEvent = LoggedInMongoEvent.convertIntoMongoEvent(loggedInEvent);
+			
+			mongoTemplate.insert(loggedInMongoEvent, "loggedInEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserJoinedLobbyEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
+	}
+	
+	public void addExistingUserJoinedLobbyEvent(ExistingUserJoinedLobbyEvent existingUserJoinedLobbyEvent) {
+		try{
+			ExistingUserJoinedLobbyMongoEvent existingUserJoinedLobbyMongoEvent = ExistingUserJoinedLobbyMongoEvent.convertIntoMongoEvent(existingUserJoinedLobbyEvent);
+			
+			mongoTemplate.insert(existingUserJoinedLobbyMongoEvent, "existingUserJoinedLobbyEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}		
 	}
 	
 	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
-		LinkedList<org.moshe.arad.mongo.events.NewUserCreatedEvent> mongoEventsNewUserCreatedEvent = null;
-		LinkedList<org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent> mongoEventsNewUserJoinedLobbyEvent = null;
-		ArrayList<org.moshe.arad.mongo.events.MongoEvent> mongoEvents = new ArrayList<>();
+		LinkedList<NewUserCreatedMongoEvent> mongoEventsNewUserCreatedEvent = null;
+		LinkedList<NewUserJoinedLobbyMongoEvent> mongoEventsNewUserJoinedLobbyEvent = null;
+		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>();
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
 		
 		if(fromDate == null){
-			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.findAll(org.moshe.arad.mongo.events.NewUserCreatedEvent.class));
-			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent.class));			
+			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.findAll(NewUserCreatedMongoEvent.class));
+			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));			
 		}
 		else{
 			Criteria criteria = Criteria.where("arrived").gte(fromDate);
 			Query query = new Query(criteria);
-			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.find(query, org.moshe.arad.mongo.events.NewUserCreatedEvent.class));
-			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent.class));
+			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.find(query, NewUserCreatedMongoEvent.class));
+			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, NewUserJoinedLobbyMongoEvent.class));
 		}
 		
 		mongoEvents.addAll(mongoEventsNewUserCreatedEvent);
 		mongoEvents.addAll(mongoEventsNewUserJoinedLobbyEvent);
-		mongoEvents = (ArrayList<MongoEvent>) mongoEvents.stream().sorted((MongoEvent e1, MongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
+		mongoEvents = (ArrayList<IMongoEvent>) mongoEvents.stream().sorted((IMongoEvent e1, IMongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
 		
-		ListIterator<org.moshe.arad.mongo.events.MongoEvent> it = mongoEvents.listIterator();
+		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
 		
 		while(it.hasNext()){
 			result.push(this.convertTo(it.next(), uuid));
@@ -104,14 +128,14 @@ public class MongoEventsStore {
 		return result;
 	}
 	
-	private BackgammonEvent convertTo(MongoEvent mongoEvent, UUID uuid){
-		if(mongoEvent.getClass().equals(org.moshe.arad.mongo.events.NewUserCreatedEvent.class)){
-			org.moshe.arad.mongo.events.NewUserCreatedEvent newUserCreatedEventMongo = (org.moshe.arad.mongo.events.NewUserCreatedEvent)mongoEvent; 
+	private BackgammonEvent convertTo(IMongoEvent mongoEvent, UUID uuid){
+		if(mongoEvent.getClass().equals(NewUserCreatedMongoEvent.class)){
+			NewUserCreatedMongoEvent newUserCreatedEventMongo = (NewUserCreatedMongoEvent)mongoEvent; 
 			NewUserCreatedEvent newUserCreatedEvent = new NewUserCreatedEvent(uuid, newUserCreatedEventMongo.getServiceId(), newUserCreatedEventMongo.getEventId(), newUserCreatedEventMongo.getArrived(), "NewUserCreatedEvent",newUserCreatedEventMongo.getBackgammonUser());
 			return newUserCreatedEvent;
 		}
-		else if(mongoEvent.getClass().equals(org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent.class)){
-			org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent newUserJoinedLobbyEventMongo = (org.moshe.arad.mongo.events.NewUserJoinedLobbyEvent)mongoEvent;
+		else if(mongoEvent.getClass().equals(NewUserJoinedLobbyMongoEvent.class)){
+			org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent newUserJoinedLobbyEventMongo = (org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent)mongoEvent;
 			NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = new NewUserJoinedLobbyEvent(uuid, newUserJoinedLobbyEventMongo.getServiceId(), newUserJoinedLobbyEventMongo.getEventId(), newUserJoinedLobbyEventMongo.getArrived(), "NewUserJoinedLobbyEvent", newUserJoinedLobbyEventMongo.getBackgammonUser());
 			return newUserJoinedLobbyEvent;
 		}

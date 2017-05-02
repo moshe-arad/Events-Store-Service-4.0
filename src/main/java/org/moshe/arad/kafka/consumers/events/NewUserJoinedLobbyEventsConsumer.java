@@ -31,8 +31,8 @@ public class NewUserJoinedLobbyEventsConsumer extends SimpleEventsConsumer {
     	try{
     		NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = convertJsonBlobIntoEvent(record.value());
     		logger.info("New User Joined Lobby Event record recieved, " + record.value());	             
-        	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addNewEvent(newUserJoinedLobbyEvent);
+        	logger.info("Event recieved, try to put it in events store...");
+        	mongoEventsStore.addNewUserJoinedLobbyEvent(newUserJoinedLobbyEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {

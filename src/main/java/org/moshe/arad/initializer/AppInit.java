@@ -10,12 +10,14 @@ import org.moshe.arad.kafka.KafkaUtils;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
+import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
+import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
@@ -38,7 +40,6 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private NewUserCreatedEventConfig newUserCreatedEventConfig;
 	
-	@Autowired
 	private NewUserJoinedLobbyEventsConsumer newUserJoinedLobbyEventConsumer;
 	
 	@Autowired
@@ -62,6 +63,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	
 	@Autowired
 	private LoggedInEventConfig loggedInEventConfig;
+	
+	private ExistingUserJoinedLobbyEventConsumer existingUserJoinedLobbyEventConsumer;
+	
+	@Autowired
+	private ExistingUserJoinedLobbyEventConfig existingUserJoinedLobbyEventConfig;
 	
 	private PullEventsWithoutSavingCommandsConsumer pullEventsWithoutSavingCommandsConsumer;
 	
@@ -116,9 +122,13 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			loggedInEventConsumer = context.getBean(LoggedInEventConsumer.class);
 			initSingleConsumer(loggedInEventConsumer, KafkaUtils.LOGGED_IN_EVENT_TOPIC, loggedInEventConfig, null);
 			
+			existingUserJoinedLobbyEventConsumer = context.getBean(ExistingUserJoinedLobbyEventConsumer.class);
+			initSingleConsumer(existingUserJoinedLobbyEventConsumer, KafkaUtils.EXISTING_USER_JOINED_LOBBY_EVENT_TOPIC, existingUserJoinedLobbyEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
-					loggedInEventConsumer));
+					loggedInEventConsumer,
+					existingUserJoinedLobbyEventConsumer));
 		}
 	}
 
