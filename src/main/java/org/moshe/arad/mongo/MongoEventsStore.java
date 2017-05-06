@@ -11,12 +11,14 @@ import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
+import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
 import org.moshe.arad.mongo.events.LoggedInMongoEvent;
+import org.moshe.arad.mongo.events.LoggedOutMongoEvent;
 import org.moshe.arad.mongo.events.NewUserCreatedMongoEvent;
 import org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent;
 import org.slf4j.Logger;
@@ -94,6 +96,20 @@ public class MongoEventsStore {
 		}		
 	}
 	
+	public void addLoggedOutEvent(LoggedOutEvent loggedOutEvent) {
+		try{
+			LoggedOutMongoEvent loggedOutMongoEvent = LoggedOutMongoEvent.convertIntoMongoEvent(loggedOutEvent);
+			
+			mongoTemplate.insert(loggedOutMongoEvent, "loggedOutEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}	
+		
+	}
+	
 	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
 		LinkedList<NewUserCreatedMongoEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> mongoEventsNewUserJoinedLobbyEvent = null;
@@ -140,7 +156,7 @@ public class MongoEventsStore {
 			return newUserJoinedLobbyEvent;
 		}
 		return null;
-	}	
+	}		
 }
 
 
