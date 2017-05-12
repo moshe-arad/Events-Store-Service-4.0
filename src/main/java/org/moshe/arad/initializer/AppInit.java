@@ -12,6 +12,7 @@ import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsu
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
@@ -19,6 +20,7 @@ import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfi
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
@@ -70,6 +72,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	private ExistingUserJoinedLobbyEventConfig existingUserJoinedLobbyEventConfig;
 	
 	private PullEventsWithoutSavingCommandsConsumer pullEventsWithoutSavingCommandsConsumer;
+	
+	private LoggedOutEventConsumer loggedOutEventConsumer;
+	
+	@Autowired
+	private LoggedOutEventConfig loggedOutEventConfig;
 	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
@@ -125,10 +132,14 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			existingUserJoinedLobbyEventConsumer = context.getBean(ExistingUserJoinedLobbyEventConsumer.class);
 			initSingleConsumer(existingUserJoinedLobbyEventConsumer, KafkaUtils.EXISTING_USER_JOINED_LOBBY_EVENT_TOPIC, existingUserJoinedLobbyEventConfig, null);
 			
+			loggedOutEventConsumer = context.getBean(LoggedOutEventConsumer.class);
+			initSingleConsumer(loggedOutEventConsumer, KafkaUtils.LOGGED_OUT_EVENT_TOPIC, loggedOutEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
-					existingUserJoinedLobbyEventConsumer));
+					existingUserJoinedLobbyEventConsumer,
+					loggedOutEventConsumer));
 		}
 	}
 

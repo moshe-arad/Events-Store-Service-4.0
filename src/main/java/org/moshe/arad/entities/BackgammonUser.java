@@ -1,5 +1,8 @@
 package org.moshe.arad.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BackgammonUser {
 
 	private String userName;
@@ -8,8 +11,10 @@ public class BackgammonUser {
 	private String lastName;
 	private String email;
 	private Status status;
-
+	private List<String> user_permissions;
+	
 	public BackgammonUser() {
+		this.user_permissions = Arrays.asList("user");
 	}
 	
 	public BackgammonUser(String userName, String password, String firstName, String lastName, String email, Status status) {
@@ -18,9 +23,22 @@ public class BackgammonUser {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
-		this.status = status; 
+		this.status = status;
+		this.user_permissions = Arrays.asList("user");
 	}
 	
+	public BackgammonUser(String userName, String password, String firstName, String lastName, String email,
+			Status status, List<String> user_permissions) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.status = status;
+		this.user_permissions = user_permissions;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -125,5 +143,15 @@ public class BackgammonUser {
 
 	public void setStatus(Status status) {
 		this.status = status;
-	}	
+	}
+
+	public List<String> getUser_permissions() {
+		return user_permissions;
+	}
+
+	public void setUser_permissions(List<String> user_permissions) {
+		this.user_permissions = user_permissions;
+	}
+	
+	
 }
