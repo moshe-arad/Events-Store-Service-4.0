@@ -113,22 +113,37 @@ public class MongoEventsStore {
 	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
 		LinkedList<NewUserCreatedMongoEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> mongoEventsNewUserJoinedLobbyEvent = null;
+		
+		LinkedList<LoggedInMongoEvent> mongoEventsLoggedInEvent = null;
+		LinkedList<ExistingUserJoinedLobbyMongoEvent> mongoEventsExistingUserJoinedLobbyEvent = null;
+		LinkedList<LoggedOutMongoEvent> mongoEventsLoggedOutEvent = null;
+		
 		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>();
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
 		
 		if(fromDate == null){
 			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.findAll(NewUserCreatedMongoEvent.class));
-			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));			
+			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));
+			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.findAll(LoggedInMongoEvent.class));
+			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(ExistingUserJoinedLobbyMongoEvent.class));
+			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.findAll(LoggedOutMongoEvent.class));
 		}
 		else{
 			Criteria criteria = Criteria.where("arrived").gte(fromDate);
 			Query query = new Query(criteria);
 			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.find(query, NewUserCreatedMongoEvent.class));
 			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, NewUserJoinedLobbyMongoEvent.class));
+			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.find(query,LoggedInMongoEvent.class));
+			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, ExistingUserJoinedLobbyMongoEvent.class));
+			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.find(query, LoggedOutMongoEvent.class));
 		}
 		
 		mongoEvents.addAll(mongoEventsNewUserCreatedEvent);
 		mongoEvents.addAll(mongoEventsNewUserJoinedLobbyEvent);
+		mongoEvents.addAll(mongoEventsLoggedInEvent);
+		mongoEvents.addAll(mongoEventsExistingUserJoinedLobbyEvent);
+		mongoEvents.addAll(mongoEventsLoggedOutEvent);
+	
 		mongoEvents = (ArrayList<IMongoEvent>) mongoEvents.stream().sorted((IMongoEvent e1, IMongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
 		
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
@@ -151,11 +166,28 @@ public class MongoEventsStore {
 			return newUserCreatedEvent;
 		}
 		else if(mongoEvent.getClass().equals(NewUserJoinedLobbyMongoEvent.class)){
-			org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent newUserJoinedLobbyEventMongo = (org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent)mongoEvent;
+			NewUserJoinedLobbyMongoEvent newUserJoinedLobbyEventMongo = (NewUserJoinedLobbyMongoEvent)mongoEvent;
 			NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = new NewUserJoinedLobbyEvent(uuid, newUserJoinedLobbyEventMongo.getServiceId(), newUserJoinedLobbyEventMongo.getEventId(), newUserJoinedLobbyEventMongo.getArrived(), "NewUserJoinedLobbyEvent", newUserJoinedLobbyEventMongo.getBackgammonUser());
 			return newUserJoinedLobbyEvent;
 		}
-		return null;
+		else if(mongoEvent.getClass().equals(LoggedInMongoEvent.class)){
+			LoggedInMongoEvent loggedInMongoEvent = (LoggedInMongoEvent)mongoEvent; 
+			LoggedInEvent loggedInEvent = new LoggedInEvent(uuid, loggedInMongoEvent.getServiceId(), loggedInMongoEvent.getEventId(), loggedInMongoEvent.getArrived(), "LoggedInEvent",loggedInMongoEvent.getBackgammonUser());
+			return loggedInEvent;
+		}
+		else if(mongoEvent.getClass().equals(ExistingUserJoinedLobbyMongoEvent.class)){
+			ExistingUserJoinedLobbyMongoEvent existingUserJoinedLobbyMongoEvent = (ExistingUserJoinedLobbyMongoEvent)mongoEvent;
+			ExistingUserJoinedLobbyEvent existingUserJoinedLobbyEvent = new ExistingUserJoinedLobbyEvent(uuid, existingUserJoinedLobbyMongoEvent.getServiceId(), existingUserJoinedLobbyMongoEvent.getEventId(), existingUserJoinedLobbyMongoEvent.getArrived(), "ExistingUserJoinedLobbyEvent", existingUserJoinedLobbyMongoEvent.getBackgammonUser());
+			return existingUserJoinedLobbyEvent;
+		}
+		else if(mongoEvent.getClass().equals(LoggedOutMongoEvent.class)){
+			LoggedOutMongoEvent loggedOutMongoEvent = (LoggedOutMongoEvent)mongoEvent;
+			LoggedOutEvent loggedOutEvent = new LoggedOutEvent(uuid, loggedOutMongoEvent.getServiceId(), loggedOutMongoEvent.getEventId(), loggedOutMongoEvent.getArrived(), "LoggedOutEvent", loggedOutMongoEvent.getBackgammonUser());
+			return loggedOutEvent;
+		}
+		else{
+			throw new RuntimeException("Failed to convert mongo event....");
+		}
 	}		
 }
 
