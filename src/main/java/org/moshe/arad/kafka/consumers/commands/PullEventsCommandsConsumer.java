@@ -62,26 +62,6 @@ public abstract class PullEventsCommandsConsumer extends SimpleCommandsConsumer 
         	ListIterator<BackgammonEvent> it = eventsFromMongoToProducer.listIterator();
         	while(it.hasNext()){
         		BackgammonEvent event = it.next();
-        		if(event == null){
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        			logger.info("**************************************");
-        		}
         		consumerToProducerQueue.getEventsQueue().put(event);
         		logger.info("Event passed to producer, event = " + event);
         	}
