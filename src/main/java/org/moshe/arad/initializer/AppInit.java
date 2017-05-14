@@ -13,6 +13,7 @@ import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsCo
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
+import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
@@ -22,6 +23,7 @@ import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingComma
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
+import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
@@ -86,6 +88,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	
 	@Autowired
 	private LoggedOutEventConfig loggedOutEventConfig;
+	
+	private NewGameRoomOpenedEventConsumer newGameRoomOpenedEventConsumer;
+	
+	@Autowired
+	private NewGameRoomOpenedEventConfig newGameRoomOpenedEventConfig;
 	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
@@ -152,11 +159,15 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			loggedOutEventConsumer = context.getBean(LoggedOutEventConsumer.class);
 			initSingleConsumer(loggedOutEventConsumer, KafkaUtils.LOGGED_OUT_EVENT_TOPIC, loggedOutEventConfig, null);
 			
+			newGameRoomOpenedEventConsumer = context.getBean(NewGameRoomOpenedEventConsumer.class);
+			initSingleConsumer(newGameRoomOpenedEventConsumer, KafkaUtils.NEW_GAME_ROOM_OPENED_EVENT_TOPIC, newGameRoomOpenedEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
 					existingUserJoinedLobbyEventConsumer,
-					loggedOutEventConsumer));
+					loggedOutEventConsumer,
+					newGameRoomOpenedEventConsumer));
 		}
 	}
 
