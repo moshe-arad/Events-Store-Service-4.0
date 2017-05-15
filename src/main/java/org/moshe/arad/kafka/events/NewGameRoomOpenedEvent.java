@@ -1,5 +1,8 @@
 package org.moshe.arad.kafka.events;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.moshe.arad.entities.GameRoom;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -16,6 +19,12 @@ public class NewGameRoomOpenedEvent extends BackgammonEvent {
 
 	public NewGameRoomOpenedEvent(GameRoom gameRoom) {
 		super();
+		this.gameRoom = gameRoom;
+	}
+
+	public NewGameRoomOpenedEvent(UUID uuid, int serviceId, int eventId, Date arrived, String clazz,
+			GameRoom gameRoom) {
+		super(uuid, serviceId, eventId, arrived, clazz);
 		this.gameRoom = gameRoom;
 	}
 

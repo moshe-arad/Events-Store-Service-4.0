@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="newGameRoomOpenedEvents")
-public class NewGameRoomOpenedMongoEvent {
+public class NewGameRoomOpenedMongoEvent implements IMongoEvent {
 
 	@Id
 	private String mongoEventId;

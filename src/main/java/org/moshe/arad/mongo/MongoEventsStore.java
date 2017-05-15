@@ -128,10 +128,10 @@ public class MongoEventsStore {
 	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
 		LinkedList<NewUserCreatedMongoEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> mongoEventsNewUserJoinedLobbyEvent = null;
-		
 		LinkedList<LoggedInMongoEvent> mongoEventsLoggedInEvent = null;
 		LinkedList<ExistingUserJoinedLobbyMongoEvent> mongoEventsExistingUserJoinedLobbyEvent = null;
-		LinkedList<LoggedOutMongoEvent> mongoEventsLoggedOutEvent = null;
+		LinkedList<LoggedOutMongoEvent> mongoEventsLoggedOutEvent = null;		
+		LinkedList<NewGameRoomOpenedMongoEvent> mongoEventsNewGameRoomOpenedEvent = null;
 		
 		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>();
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
@@ -142,6 +142,7 @@ public class MongoEventsStore {
 			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.findAll(LoggedInMongoEvent.class));
 			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(ExistingUserJoinedLobbyMongoEvent.class));
 			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.findAll(LoggedOutMongoEvent.class));
+			mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.findAll(NewGameRoomOpenedMongoEvent.class));
 		}
 		else{
 			Criteria criteria = Criteria.where("arrived").gte(fromDate);
@@ -151,6 +152,7 @@ public class MongoEventsStore {
 			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.find(query,LoggedInMongoEvent.class));
 			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, ExistingUserJoinedLobbyMongoEvent.class));
 			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.find(query, LoggedOutMongoEvent.class));
+			mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.find(query, NewGameRoomOpenedMongoEvent.class));
 		}
 		
 		mongoEvents.addAll(mongoEventsNewUserCreatedEvent);
@@ -158,7 +160,8 @@ public class MongoEventsStore {
 		mongoEvents.addAll(mongoEventsLoggedInEvent);
 		mongoEvents.addAll(mongoEventsExistingUserJoinedLobbyEvent);
 		mongoEvents.addAll(mongoEventsLoggedOutEvent);
-	
+		mongoEvents.addAll(mongoEventsNewGameRoomOpenedEvent);
+		
 		mongoEvents = (ArrayList<IMongoEvent>) mongoEvents.stream().sorted((IMongoEvent e1, IMongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
 		
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
@@ -199,6 +202,11 @@ public class MongoEventsStore {
 			LoggedOutMongoEvent loggedOutMongoEvent = (LoggedOutMongoEvent)mongoEvent;
 			LoggedOutEvent loggedOutEvent = new LoggedOutEvent(uuid, loggedOutMongoEvent.getServiceId(), loggedOutMongoEvent.getEventId(), loggedOutMongoEvent.getArrived(), "LoggedOutEvent", loggedOutMongoEvent.getBackgammonUser());
 			return loggedOutEvent;
+		}
+		else if(mongoEvent.getClass().equals(NewGameRoomOpenedMongoEvent.class)){
+			NewGameRoomOpenedMongoEvent newGameRoomOpenedMongoEvent = (NewGameRoomOpenedMongoEvent)mongoEvent;
+			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "NewGameRoomOpenedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
+			return newGameRoomOpenedEvent;
 		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");

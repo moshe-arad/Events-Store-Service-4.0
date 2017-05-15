@@ -186,7 +186,7 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 		initSingleProducer(toLobbyfromMongoEventsWithoutSavingProducer, KafkaUtils.TO_LOBBY_FROM_MONGO_EVENTS_WITHOUT_SAVING_TOPIC, toLobbypullEventsWithoutSavingQueue);
 		logger.info("Initialize from mongo to users service events producer, completed...");
 		
-		executeProducersAndConsumers(Arrays.asList(fromMongoEventsWithSavingProducer, fromMongoEventsWithoutSavingProducer));
+		executeProducersAndConsumers(Arrays.asList(fromMongoEventsWithSavingProducer, fromMongoEventsWithoutSavingProducer, toLobbyfromMongoEventsWithoutSavingProducer));
 	}
 
 	@Override
