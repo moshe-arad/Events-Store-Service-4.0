@@ -51,8 +51,6 @@ public abstract class PullEventsCommandsConsumer extends SimpleCommandsConsumer 
         	logger.info("UUID extracted successfully, UUID = " + uuid.toString());
         	
         	logger.info("Initiating request to mongo events store in order to get existing events in events store which occured from date = " + fromDate.toString());
-        	
-        	long startTime1 = System.nanoTime();
     		
         	LinkedList<BackgammonEvent> eventsFromMongoToProducer;
         	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null, pullEventsCommand.getServiceName()));
@@ -66,19 +64,7 @@ public abstract class PullEventsCommandsConsumer extends SimpleCommandsConsumer 
         		consumerToProducerQueue.getEventsQueue().put(event);
         		logger.info("Event passed to producer, event = " + event);
         	}
-        	logger.info("All events passed to producer...");
-        	
-        	
-    		long endTime1 = System.nanoTime();
-    		
-    		long duration1 = (endTime1 - startTime1);
-    		logger.info("***************************************");
-    		logger.info("*******&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&**********");
-    		logger.info("*******  duration = "+ duration1+" *********");
-    		logger.info("***************************************");
-    		
-    		
-        	
+        	logger.info("All events passed to producer...");        	
     	}
 		catch (Exception ex) {
 			logger.error("Error occured while trying to save event in mongo events store...");

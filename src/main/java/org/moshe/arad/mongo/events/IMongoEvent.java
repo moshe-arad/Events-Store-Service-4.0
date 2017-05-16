@@ -7,4 +7,6 @@ public interface IMongoEvent {
 	public Date getArrived();
 
 	public void setArrived(Date arrived);
+
+	public String getClazz();
 }
