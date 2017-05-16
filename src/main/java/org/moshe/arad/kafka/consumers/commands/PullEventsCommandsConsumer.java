@@ -3,6 +3,7 @@ package org.moshe.arad.kafka.consumers.commands;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -45,17 +46,17 @@ public abstract class PullEventsCommandsConsumer extends SimpleCommandsConsumer 
         	boolean isIgnoreDate = pullEventsCommand.isIgnoreDate();
         	logger.info("Date extracted successfully, Date = " + fromDate.toString());
         	
-        	//TODO need to move logic from consumers, on consumers we'll have only simple code related to recieved record.
-        	
         	logger.info("Trying to extract UUID, from recieved command...");
         	UUID uuid = pullEventsCommand.getUuid();
         	logger.info("UUID extracted successfully, UUID = " + uuid.toString());
         	
         	logger.info("Initiating request to mongo events store in order to get existing events in events store which occured from date = " + fromDate.toString());
-        	//TODO consumer always be responsible to pass data from himself to producer
+        	
+        	long startTime1 = System.nanoTime();
+    		
         	LinkedList<BackgammonEvent> eventsFromMongoToProducer;
-        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null));
-        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, fromDate));
+        	if(isIgnoreDate == true) eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, null, pullEventsCommand.getServiceName()));
+        	else eventsFromMongoToProducer = new LinkedList<>(mongoEventsStore.getEventsOccuredFrom(uuid, fromDate, pullEventsCommand.getServiceName()));
         	logger.info("Events were extracted from mongo DB successfuly...");
         	
         	logger.info("Start passing events to producer...");
@@ -66,6 +67,18 @@ public abstract class PullEventsCommandsConsumer extends SimpleCommandsConsumer 
         		logger.info("Event passed to producer, event = " + event);
         	}
         	logger.info("All events passed to producer...");
+        	
+        	
+    		long endTime1 = System.nanoTime();
+    		
+    		long duration1 = (endTime1 - startTime1);
+    		logger.info("***************************************");
+    		logger.info("*******&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&**********");
+    		logger.info("*******  duration = "+ duration1+" *********");
+    		logger.info("***************************************");
+    		
+    		
+        	
     	}
 		catch (Exception ex) {
 			logger.error("Error occured while trying to save event in mongo events store...");

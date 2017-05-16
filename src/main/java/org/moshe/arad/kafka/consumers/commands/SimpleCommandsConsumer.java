@@ -59,7 +59,7 @@ public abstract class SimpleCommandsConsumer implements Runnable, ISimpleCommand
 					consumer.close();
 				}
 	    				       		        
-			} , 0, 100, TimeUnit.MILLISECONDS);
+			} , 0, 10, TimeUnit.MILLISECONDS);
 	}
 //	}
 	

@@ -104,7 +104,7 @@ public class SimpleEventsProducer <T extends BackgammonEvent> implements ISimple
 						e.printStackTrace();
 					}
 				}
-			}, 0, 500, TimeUnit.MILLISECONDS);
+			}, 0, 10, TimeUnit.MILLISECONDS);
 		}
 	}
 	

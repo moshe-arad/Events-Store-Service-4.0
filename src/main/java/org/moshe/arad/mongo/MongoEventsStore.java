@@ -7,6 +7,7 @@ import java.util.ListIterator;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.moshe.arad.kafka.Services;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
@@ -125,7 +126,7 @@ public class MongoEventsStore {
 		}		
 	}
 	
-	public LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate){
+	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> mongoEventsNewUserCreatedEvent = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> mongoEventsNewUserJoinedLobbyEvent = null;
 		LinkedList<LoggedInMongoEvent> mongoEventsLoggedInEvent = null;
@@ -133,36 +134,49 @@ public class MongoEventsStore {
 		LinkedList<LoggedOutMongoEvent> mongoEventsLoggedOutEvent = null;		
 		LinkedList<NewGameRoomOpenedMongoEvent> mongoEventsNewGameRoomOpenedEvent = null;
 		
-		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>();
+		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>(100000);
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
 		
 		if(fromDate == null){
-			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.findAll(NewUserCreatedMongoEvent.class));
-			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));
-			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.findAll(LoggedInMongoEvent.class));
-			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(ExistingUserJoinedLobbyMongoEvent.class));
-			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.findAll(LoggedOutMongoEvent.class));
-			mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.findAll(NewGameRoomOpenedMongoEvent.class));
+			if(serviceName.equals(Services.Users.name())){
+				mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.findAll(NewUserCreatedMongoEvent.class));
+				mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));
+				mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.findAll(LoggedInMongoEvent.class));
+				mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.findAll(ExistingUserJoinedLobbyMongoEvent.class));
+				mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.findAll(LoggedOutMongoEvent.class));
+			}
+			else if(serviceName.equals(Services.Lobby.name())){
+				mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.findAll(NewGameRoomOpenedMongoEvent.class));
+			}			
 		}
 		else{
 			Criteria criteria = Criteria.where("arrived").gte(fromDate);
 			Query query = new Query(criteria);
-			mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.find(query, NewUserCreatedMongoEvent.class));
-			mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, NewUserJoinedLobbyMongoEvent.class));
-			mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.find(query,LoggedInMongoEvent.class));
-			mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, ExistingUserJoinedLobbyMongoEvent.class));
-			mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.find(query, LoggedOutMongoEvent.class));
-			mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.find(query, NewGameRoomOpenedMongoEvent.class));
+			
+			if(serviceName.equals(Services.Users.name())){
+				mongoEventsNewUserCreatedEvent = new LinkedList<>(mongoTemplate.find(query, NewUserCreatedMongoEvent.class));
+				mongoEventsNewUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, NewUserJoinedLobbyMongoEvent.class));
+				mongoEventsLoggedInEvent = new LinkedList<>(mongoTemplate.find(query,LoggedInMongoEvent.class));
+				mongoEventsExistingUserJoinedLobbyEvent = new LinkedList<>(mongoTemplate.find(query, ExistingUserJoinedLobbyMongoEvent.class));
+				mongoEventsLoggedOutEvent = new LinkedList<>(mongoTemplate.find(query, LoggedOutMongoEvent.class));								
+			}
+			else if(serviceName.equals(Services.Lobby.name())){
+				mongoEventsNewGameRoomOpenedEvent = new LinkedList<>(mongoTemplate.find(query, NewGameRoomOpenedMongoEvent.class));
+			}			
 		}
 		
-		mongoEvents.addAll(mongoEventsNewUserCreatedEvent);
-		mongoEvents.addAll(mongoEventsNewUserJoinedLobbyEvent);
-		mongoEvents.addAll(mongoEventsLoggedInEvent);
-		mongoEvents.addAll(mongoEventsExistingUserJoinedLobbyEvent);
-		mongoEvents.addAll(mongoEventsLoggedOutEvent);
-		mongoEvents.addAll(mongoEventsNewGameRoomOpenedEvent);
-		
-		mongoEvents = (ArrayList<IMongoEvent>) mongoEvents.stream().sorted((IMongoEvent e1, IMongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
+		if(serviceName.equals(Services.Users.name())){
+			mongoEvents.addAll(mongoEventsNewUserCreatedEvent);
+			mongoEvents.addAll(mongoEventsNewUserJoinedLobbyEvent);
+			mongoEvents.addAll(mongoEventsLoggedInEvent);
+			mongoEvents.addAll(mongoEventsExistingUserJoinedLobbyEvent);
+			mongoEvents.addAll(mongoEventsLoggedOutEvent);
+		}
+		else if(serviceName.equals(Services.Lobby.name())){
+			mongoEvents.addAll(mongoEventsNewGameRoomOpenedEvent);
+		}
+				
+//		mongoEvents = (ArrayList<IMongoEvent>) mongoEvents.stream().sorted((IMongoEvent e1, IMongoEvent e2) -> {return e2.getArrived().compareTo(e1.getArrived());}).collect(Collectors.toList());
 		
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
 		

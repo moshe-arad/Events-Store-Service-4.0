@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
+import org.moshe.arad.kafka.KafkaUtils;
+import org.moshe.arad.kafka.Services;
 import org.moshe.arad.kafka.commands.PullEventsCommand;
 import org.moshe.arad.kafka.commands.PullEventsWithSavingCommand;
 import org.moshe.arad.kafka.commands.PullEventsWithoutSavingCommand;
@@ -30,7 +32,9 @@ public class PullEventsWithSavingCommandsConsumer extends PullEventsCommandsCons
 	public PullEventsWithSavingCommand getCommandFromKafkaRecord(ConsumerRecord<String, String> record) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			return (PullEventsWithSavingCommand) objectMapper.readValue(record.value(), PullEventsWithSavingCommand.class);
+			PullEventsWithSavingCommand pullEventsWithSavingCommand = (PullEventsWithSavingCommand) objectMapper.readValue(record.value(), PullEventsWithSavingCommand.class);
+			setServiceName(record, pullEventsWithSavingCommand); 
+			return pullEventsWithSavingCommand;
 		} catch (IOException e) {
 			logger.error("Failed to convert json into PullEventsWithSavingCommand object...");
 			logger.error(e.getMessage());
@@ -41,6 +45,10 @@ public class PullEventsWithSavingCommandsConsumer extends PullEventsCommandsCons
 	}
 
 
+	private void setServiceName(ConsumerRecord<String, String> record, PullEventsWithSavingCommand pullEventsWithSavingCommand) {
+		if(record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC) || record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC)) pullEventsWithSavingCommand.setServiceName(Services.Lobby.name());
+		else if(record.topic().equals(KafkaUtils.PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC) || record.topic().equals(KafkaUtils.PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC)) pullEventsWithSavingCommand.setServiceName(Services.Users.name());
+	}
 }
 
 
