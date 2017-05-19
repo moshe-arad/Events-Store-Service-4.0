@@ -21,6 +21,7 @@ import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
+import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
@@ -28,6 +29,7 @@ import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
+import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -101,6 +103,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private GameRoomClosedEventConfig gameRoomClosedEventConfig;
 	
+	private UserAddedAsWatcherEventConsumer userAddedAsWatcherEventConsumer;
+	
+	@Autowired
+	private UserAddedAsWatcherEventConfig userAddedAsWatcherEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -172,13 +179,17 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			gameRoomClosedEventConsumer = context.getBean(GameRoomClosedEventConsumer.class);
 			initSingleConsumer(gameRoomClosedEventConsumer, KafkaUtils.GAME_ROOM_CLOSED_EVENT_TOPIC, gameRoomClosedEventConfig, null);
 			
+			userAddedAsWatcherEventConsumer = context.getBean(UserAddedAsWatcherEventConsumer.class);
+			initSingleConsumer(userAddedAsWatcherEventConsumer, KafkaUtils.USER_ADDED_AS_WATCHER_EVENT_TOPIC, userAddedAsWatcherEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
 					existingUserJoinedLobbyEventConsumer,
 					loggedOutEventConsumer,
 					newGameRoomOpenedEventConsumer,
-					gameRoomClosedEventConsumer));
+					gameRoomClosedEventConsumer,
+					userAddedAsWatcherEventConsumer));
 		}
 	}
 

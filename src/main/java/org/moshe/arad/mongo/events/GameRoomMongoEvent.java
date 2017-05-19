@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.moshe.arad.entities.GameRoom;
 import org.moshe.arad.kafka.events.GameRoomClosedEvent;
 import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
+import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -63,7 +64,7 @@ public class GameRoomMongoEvent implements IMongoEvent{
 		gameRoomMongoEvent.setClazz(event.getClazz());
 		
 		return gameRoomMongoEvent;
-	}
+	}	
 
 	public String getMongoEventId() {
 		return mongoEventId;
@@ -119,5 +120,5 @@ public class GameRoomMongoEvent implements IMongoEvent{
 
 	public void setGameRoom(GameRoom gameRoom) {
 		this.gameRoom = gameRoom;
-	}
+	}	
 }

@@ -17,7 +17,9 @@ import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
+import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.mongo.events.GameRoomMongoEvent;
+import org.moshe.arad.mongo.events.GameRoomWatcherMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
 import org.moshe.arad.mongo.events.UserMongoEvent;
 import org.slf4j.Logger;
@@ -131,6 +133,19 @@ public class MongoEventsStore {
 		}			
 	}
 	
+	public void addNewGameRoomEvent(UserAddedAsWatcherEvent userAddedAsWatcherEvent) {
+		try{
+			GameRoomWatcherMongoEvent gameRoomMongoEvent = (GameRoomWatcherMongoEvent) GameRoomWatcherMongoEvent.convertIntoMongoEvent(userAddedAsWatcherEvent);
+			
+			mongoTemplate.insert(gameRoomMongoEvent, "gameRoomsEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}		
+	}
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<UserMongoEvent> userMongoEvents = null;		
 		LinkedList<GameRoomMongoEvent> gameRoomMongoEvent = null;
@@ -216,10 +231,17 @@ public class MongoEventsStore {
 			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "GameRoomClosedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
 			return newGameRoomOpenedEvent;
 		}
+		else if(clazz.equals("UserAddedAsWatcherEvent")){
+			GameRoomWatcherMongoEvent gameRoomWatcherMongoEvent = (GameRoomWatcherMongoEvent)mongoEvent;
+			UserAddedAsWatcherEvent userAddedAsWatcherEvent = new UserAddedAsWatcherEvent(uuid, gameRoomWatcherMongoEvent.getServiceId(), gameRoomWatcherMongoEvent.getEventId(), gameRoomWatcherMongoEvent.getArrived(), "UserAddedAsWatcherEvent", gameRoomWatcherMongoEvent.getNewWatcher(), gameRoomWatcherMongoEvent.getGameRoom());
+			return userAddedAsWatcherEvent;
+		}		
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}	
+	}
+
+		
 }
 
 
