@@ -18,10 +18,13 @@ import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
+import org.moshe.arad.kafka.events.WatcherRemovedEvent;
+import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomWatcherMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
 import org.moshe.arad.mongo.events.UserMongoEvent;
+import org.moshe.arad.mongo.events.WatcherRemovedMongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,9 +125,9 @@ public class MongoEventsStore {
 	
 	public void addNewGameRoomEvent(GameRoomClosedEvent gameRoomClosedEvent) {
 		try{
-			GameRoomMongoEvent gameRoomMongoEvent = GameRoomMongoEvent.convertIntoMongoEvent(gameRoomClosedEvent);
+			GameRoomClosedMongoEvent gameRoomClosedMongoEvent = GameRoomClosedMongoEvent.convertIntoMongoEvent(gameRoomClosedEvent);
 			
-			mongoTemplate.insert(gameRoomMongoEvent, "gameRoomsEvents");		
+			mongoTemplate.insert(gameRoomClosedMongoEvent, "gameRoomsEvents");		
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
@@ -144,6 +147,19 @@ public class MongoEventsStore {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}		
+	}
+	
+	public void addNewGameRoomEvent(WatcherRemovedEvent watcherRemovedEvent) {
+		try{
+			WatcherRemovedMongoEvent gameRoomMongoEvent = (WatcherRemovedMongoEvent) WatcherRemovedMongoEvent.convertIntoMongoEvent(watcherRemovedEvent);
+			
+			mongoTemplate.insert(gameRoomMongoEvent, "gameRoomsEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
 	}
 	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
@@ -226,22 +242,30 @@ public class MongoEventsStore {
 			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "NewGameRoomOpenedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
 			return newGameRoomOpenedEvent;
 		}
-		else if(clazz.equals("GameRoomClosedEvent")){
-			GameRoomMongoEvent newGameRoomOpenedMongoEvent = (GameRoomMongoEvent)mongoEvent;
-			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "GameRoomClosedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
-			return newGameRoomOpenedEvent;
-		}
+//		else if(clazz.equals("GameRoomClosedEvent")){
+//			GameRoomMongoEvent newGameRoomOpenedMongoEvent = (GameRoomMongoEvent)mongoEvent;
+//			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "GameRoomClosedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
+//			return newGameRoomOpenedEvent;
+//		}
 		else if(clazz.equals("UserAddedAsWatcherEvent")){
 			GameRoomWatcherMongoEvent gameRoomWatcherMongoEvent = (GameRoomWatcherMongoEvent)mongoEvent;
 			UserAddedAsWatcherEvent userAddedAsWatcherEvent = new UserAddedAsWatcherEvent(uuid, gameRoomWatcherMongoEvent.getServiceId(), gameRoomWatcherMongoEvent.getEventId(), gameRoomWatcherMongoEvent.getArrived(), "UserAddedAsWatcherEvent", gameRoomWatcherMongoEvent.getNewWatcher(), gameRoomWatcherMongoEvent.getGameRoom());
 			return userAddedAsWatcherEvent;
-		}		
+		}	
+		else if(clazz.equals("GameRoomClosedEvent")){
+			GameRoomClosedMongoEvent gameRoomClosedMongoEvent = (GameRoomClosedMongoEvent)mongoEvent;
+			GameRoomClosedEvent gameRoomClosedEvent = new GameRoomClosedEvent(uuid, gameRoomClosedMongoEvent.getServiceId(), gameRoomClosedMongoEvent.getEventId(), gameRoomClosedMongoEvent.getArrived(), "GameRoomClosedEvent", gameRoomClosedMongoEvent.getClosedByUserName(), gameRoomClosedMongoEvent.getGameRoom());
+			return gameRoomClosedEvent;
+		}
+		else if(clazz.equals("WatcherRemovedEvent")){
+			WatcherRemovedMongoEvent watcherRemovedMongoEvent = (WatcherRemovedMongoEvent)mongoEvent;
+			WatcherRemovedEvent watcherRemovedEvent = new WatcherRemovedEvent(uuid, watcherRemovedMongoEvent.getServiceId(), watcherRemovedMongoEvent.getEventId(), watcherRemovedMongoEvent.getArrived(), "WatcherRemovedEvent", watcherRemovedMongoEvent.getRemovedWatcher(), watcherRemovedMongoEvent.getGameRoom());
+			return watcherRemovedEvent;
+		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
 	}
-
-		
 }
 
 

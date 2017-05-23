@@ -12,6 +12,7 @@ import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsu
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedEventConfig;
+import org.moshe.arad.kafka.consumers.config.GameRoomClosedEventLogoutConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
@@ -22,14 +23,17 @@ import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfi
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
+import org.moshe.arad.kafka.consumers.config.WatcherRemovedEventConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedEventConsumer;
+import org.moshe.arad.kafka.consumers.events.GameRoomClosedEventLogoutConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
+import org.moshe.arad.kafka.consumers.events.WatcherRemovedEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -108,6 +112,16 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserAddedAsWatcherEventConfig userAddedAsWatcherEventConfig;
 	
+	private GameRoomClosedEventLogoutConsumer gameRoomClosedEventLogoutConsumer;
+	
+	@Autowired
+	private GameRoomClosedEventLogoutConfig gameRoomClosedEventLogoutConfig;
+	
+	private WatcherRemovedEventConsumer watcherRemovedEventConsumer;
+	
+	@Autowired
+	private WatcherRemovedEventConfig watcherRemovedEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -182,6 +196,12 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userAddedAsWatcherEventConsumer = context.getBean(UserAddedAsWatcherEventConsumer.class);
 			initSingleConsumer(userAddedAsWatcherEventConsumer, KafkaUtils.USER_ADDED_AS_WATCHER_EVENT_TOPIC, userAddedAsWatcherEventConfig, null);
 			
+			gameRoomClosedEventLogoutConsumer = context.getBean(GameRoomClosedEventLogoutConsumer.class);
+			initSingleConsumer(gameRoomClosedEventLogoutConsumer, KafkaUtils.GAME_ROOM_CLOSED_EVENT_LOGOUT_TOPIC, gameRoomClosedEventLogoutConfig, null);
+			
+			watcherRemovedEventConsumer = context.getBean(WatcherRemovedEventConsumer.class);
+			initSingleConsumer(watcherRemovedEventConsumer, KafkaUtils.WATCHER_REMOVED_EVENT_TOPIC, watcherRemovedEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -189,7 +209,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					loggedOutEventConsumer,
 					newGameRoomOpenedEventConsumer,
 					gameRoomClosedEventConsumer,
-					userAddedAsWatcherEventConsumer));
+					userAddedAsWatcherEventConsumer,
+					gameRoomClosedEventLogoutConsumer,
+					watcherRemovedEventConsumer));
 		}
 	}
 
