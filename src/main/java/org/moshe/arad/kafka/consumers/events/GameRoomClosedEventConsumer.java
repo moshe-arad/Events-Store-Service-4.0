@@ -35,7 +35,7 @@ public class GameRoomClosedEventConsumer extends SimpleEventsConsumer {
     		GameRoomClosedEvent gameRoomClosedEvent = convertJsonBlobIntoEvent(record.value());    		
     		logger.info("Game Room Closed Event record recieved, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addNewGameRoomEvent(gameRoomClosedEvent);
+        	mongoEventsStore.addGameRoomClosedEvent(gameRoomClosedEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {

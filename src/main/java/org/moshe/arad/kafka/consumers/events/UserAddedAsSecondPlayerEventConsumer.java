@@ -8,6 +8,8 @@ import org.moshe.arad.kafka.events.GameRoomClosedEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
+import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
+import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,23 +21,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 @Scope("prototype")
-public class GameRoomClosedEventLogoutConsumer extends SimpleEventsConsumer {
+public class UserAddedAsSecondPlayerEventConsumer extends SimpleEventsConsumer {
 
 	@Autowired
 	private MongoEventsStore mongoEventsStore;
 	
-	Logger logger = LoggerFactory.getLogger(GameRoomClosedEventLogoutConsumer.class);
+	Logger logger = LoggerFactory.getLogger(UserAddedAsSecondPlayerEventConsumer.class);
 	
-	public GameRoomClosedEventLogoutConsumer() {
+	public UserAddedAsSecondPlayerEventConsumer() {
 	}
 
 	@Override
 	public void consumerOperations(ConsumerRecord<String,String> record) {
     	try{
-    		GameRoomClosedEvent gameRoomClosedEvent = convertJsonBlobIntoEvent(record.value());    		
-    		logger.info("Game Room Closed Event record recieved due to logout by end user, " + record.value());	             
+    		UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent = convertJsonBlobIntoEvent(record.value());    		
+    		logger.info("Game Room Closed Event record recieved, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addGameRoomClosedEvent(gameRoomClosedEvent);
+        	mongoEventsStore.addUserAddedAsSecondPlayerEvent(userAddedAsSecondPlayerEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {
@@ -45,10 +47,10 @@ public class GameRoomClosedEventLogoutConsumer extends SimpleEventsConsumer {
 		}
 	}
 	
-	private GameRoomClosedEvent convertJsonBlobIntoEvent(String JsonBlob){
+	private UserAddedAsSecondPlayerEvent convertJsonBlobIntoEvent(String JsonBlob){
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			return objectMapper.readValue(JsonBlob, GameRoomClosedEvent.class);
+			return objectMapper.readValue(JsonBlob, UserAddedAsSecondPlayerEvent.class);
 		} catch (IOException e) {
 			logger.error("Falied to convert Json blob into Event...");
 			logger.error(e.getMessage());

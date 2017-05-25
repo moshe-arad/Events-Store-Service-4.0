@@ -17,8 +17,10 @@ import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
+import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.kafka.events.WatcherRemovedEvent;
+import org.moshe.arad.mongo.events.AddSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomWatcherMongoEvent;
@@ -123,7 +125,7 @@ public class MongoEventsStore {
 		}		
 	}
 	
-	public void addNewGameRoomEvent(GameRoomClosedEvent gameRoomClosedEvent) {
+	public void addGameRoomClosedEvent(GameRoomClosedEvent gameRoomClosedEvent) {
 		try{
 			GameRoomClosedMongoEvent gameRoomClosedMongoEvent = GameRoomClosedMongoEvent.convertIntoMongoEvent(gameRoomClosedEvent);
 			
@@ -136,7 +138,7 @@ public class MongoEventsStore {
 		}			
 	}
 	
-	public void addNewGameRoomEvent(UserAddedAsWatcherEvent userAddedAsWatcherEvent) {
+	public void addUserAddedAsWatcherEvent(UserAddedAsWatcherEvent userAddedAsWatcherEvent) {
 		try{
 			GameRoomWatcherMongoEvent gameRoomMongoEvent = (GameRoomWatcherMongoEvent) GameRoomWatcherMongoEvent.convertIntoMongoEvent(userAddedAsWatcherEvent);
 			
@@ -149,7 +151,7 @@ public class MongoEventsStore {
 		}		
 	}
 	
-	public void addNewGameRoomEvent(WatcherRemovedEvent watcherRemovedEvent) {
+	public void addWatcherRemovedEvent(WatcherRemovedEvent watcherRemovedEvent) {
 		try{
 			WatcherRemovedMongoEvent gameRoomMongoEvent = (WatcherRemovedMongoEvent) WatcherRemovedMongoEvent.convertIntoMongoEvent(watcherRemovedEvent);
 			
@@ -160,6 +162,19 @@ public class MongoEventsStore {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
+	}
+	
+	public void addUserAddedAsSecondPlayerEvent(UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent) {
+		try{
+			AddSecondPlayerMongoEvent addSecondPlayerMongoEvent = (AddSecondPlayerMongoEvent) AddSecondPlayerMongoEvent.convertIntoMongoEvent(userAddedAsSecondPlayerEvent);
+			
+			mongoTemplate.insert(addSecondPlayerMongoEvent, "gameRoomsEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}		
 	}
 	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
@@ -261,6 +276,11 @@ public class MongoEventsStore {
 			WatcherRemovedMongoEvent watcherRemovedMongoEvent = (WatcherRemovedMongoEvent)mongoEvent;
 			WatcherRemovedEvent watcherRemovedEvent = new WatcherRemovedEvent(uuid, watcherRemovedMongoEvent.getServiceId(), watcherRemovedMongoEvent.getEventId(), watcherRemovedMongoEvent.getArrived(), "WatcherRemovedEvent", watcherRemovedMongoEvent.getRemovedWatcher(), watcherRemovedMongoEvent.getGameRoom());
 			return watcherRemovedEvent;
+		}
+		else if(clazz.equals("UserAddedAsSecondPlayerEvent")){
+			AddSecondPlayerMongoEvent addSecondPlayerMongoEvent = (AddSecondPlayerMongoEvent)mongoEvent;
+			UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent = new UserAddedAsSecondPlayerEvent(uuid, addSecondPlayerMongoEvent.getServiceId(), addSecondPlayerMongoEvent.getEventId(), addSecondPlayerMongoEvent.getArrived(), "UserAddedAsSecondPlayerEvent", addSecondPlayerMongoEvent.getSecondPlayer(), addSecondPlayerMongoEvent.getGameRoom());
+			return userAddedAsSecondPlayerEvent;
 		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");

@@ -36,7 +36,7 @@ public class WatcherRemovedEventConsumer extends SimpleEventsConsumer {
     		WatcherRemovedEvent watcherRemovedEvent = convertJsonBlobIntoEvent(record.value());    		
     		logger.info("Watcher Removed Event record recieved due to logout by end user, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addNewGameRoomEvent(watcherRemovedEvent);
+        	mongoEventsStore.addWatcherRemovedEvent(watcherRemovedEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {
