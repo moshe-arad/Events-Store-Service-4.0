@@ -19,6 +19,7 @@ import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
+import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.kafka.events.WatcherRemovedEvent;
 import org.moshe.arad.mongo.events.AddSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
@@ -177,6 +178,19 @@ public class MongoEventsStore {
 		}		
 	}
 	
+	public void addUserPermissionsUpdatedEvent(UserPermissionsUpdatedEvent userPermissionsUpdatedEvent) {
+		try{
+			UserMongoEvent userPermissionsUpdatedMongoEvent = UserMongoEvent.convertIntoMongoEvent(userPermissionsUpdatedEvent);
+			
+			mongoTemplate.insert(userPermissionsUpdatedMongoEvent, "userEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<UserMongoEvent> userMongoEvents = null;		
 		LinkedList<GameRoomMongoEvent> gameRoomMongoEvent = null;
@@ -282,10 +296,17 @@ public class MongoEventsStore {
 			UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent = new UserAddedAsSecondPlayerEvent(uuid, addSecondPlayerMongoEvent.getServiceId(), addSecondPlayerMongoEvent.getEventId(), addSecondPlayerMongoEvent.getArrived(), "UserAddedAsSecondPlayerEvent", addSecondPlayerMongoEvent.getSecondPlayer(), addSecondPlayerMongoEvent.getGameRoom());
 			return userAddedAsSecondPlayerEvent;
 		}
+		else if(clazz.equals("UserPermissionsUpdatedEvent")){
+			UserMongoEvent userPermissionsUpdatedMongoEvent = (UserMongoEvent)mongoEvent;
+			UserPermissionsUpdatedEvent userPermissionsUpdatedEvent = new UserPermissionsUpdatedEvent(uuid, userPermissionsUpdatedMongoEvent.getServiceId(), userPermissionsUpdatedMongoEvent.getEventId(), userPermissionsUpdatedMongoEvent.getArrived(), "UserPermissionsUpdatedEvent", userPermissionsUpdatedMongoEvent.getBackgammonUser());
+			return userPermissionsUpdatedEvent;
+		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
 	}
+
+	
 }
 
 

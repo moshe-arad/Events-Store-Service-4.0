@@ -9,6 +9,7 @@ import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
+import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -98,6 +99,17 @@ public class UserMongoEvent implements IMongoEvent {
 		newUserJoinedLobbyMongoEvent.setClazz(event.getClazz());
 		
 		return newUserJoinedLobbyMongoEvent;
+	}
+	
+	public static UserMongoEvent convertIntoMongoEvent(UserPermissionsUpdatedEvent event) {
+		UserMongoEvent userPermissionsUpdatedEvent = new UserMongoEvent();
+		
+		userPermissionsUpdatedEvent.setUuid(event.getUuid());
+		userPermissionsUpdatedEvent.setArrived(event.getArrived());
+		userPermissionsUpdatedEvent.setBackgammonUser(event.getBackgammonUser());
+		userPermissionsUpdatedEvent.setClazz(event.getClazz());
+		
+		return userPermissionsUpdatedEvent;
 	}
 	
 	public String getMongoEventId() {
