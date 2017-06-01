@@ -24,6 +24,7 @@ import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
+import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.WatcherRemovedEventConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
@@ -36,6 +37,7 @@ import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
+import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WatcherRemovedEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
@@ -136,6 +138,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserPermissionsUpdatedEventConfig userPermissionsUpdatedEventConfig;
 	
+	private UserPermissionsUpdatedAddedWatcherEventConsumer userPermissionsUpdatedAddedWatcherEventConsumer;
+	
+	@Autowired
+	private UserPermissionsUpdatedAddedWatcherEventConfig userPermissionsUpdatedAddedWatcherEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -222,6 +229,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userPermissionsUpdatedEventConsumer = context.getBean(UserPermissionsUpdatedEventConsumer.class);
 			initSingleConsumer(userPermissionsUpdatedEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_EVENT_TOPIC, userPermissionsUpdatedEventConfig, null);
 			
+			userPermissionsUpdatedAddedWatcherEventConsumer = context.getBean(UserPermissionsUpdatedAddedWatcherEventConsumer.class);
+			initSingleConsumer(userPermissionsUpdatedAddedWatcherEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_USER_ADDED_WATCHER_EVENT_TOPIC, userPermissionsUpdatedAddedWatcherEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -233,7 +243,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					gameRoomClosedEventLogoutConsumer,
 					watcherRemovedEventConsumer,
 					userAddedAsSecondPlayerEventConsumer,
-					userPermissionsUpdatedEventConsumer));
+					userPermissionsUpdatedEventConsumer,
+					userPermissionsUpdatedAddedWatcherEventConsumer));
 		}
 	}
 
