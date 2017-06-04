@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
-import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
@@ -66,17 +65,6 @@ public class UserMongoEvent implements IMongoEvent {
 		existingUserJoinedLobbyMongoEvent.setClazz(event.getClazz());
 		
 		return existingUserJoinedLobbyMongoEvent;
-	}
-	
-	public static UserMongoEvent convertIntoMongoEvent(LoggedOutEvent event) {
-		UserMongoEvent loggedOutMongoEvent = new UserMongoEvent();
-		
-		loggedOutMongoEvent.setUuid(event.getUuid());
-		loggedOutMongoEvent.setArrived(event.getArrived());
-		loggedOutMongoEvent.setBackgammonUser(event.getBackgammonUser());
-		loggedOutMongoEvent.setClazz(event.getClazz());
-		
-		return loggedOutMongoEvent;
 	}
 	
 	public static UserMongoEvent convertIntoMongoEvent(NewUserCreatedEvent event) {

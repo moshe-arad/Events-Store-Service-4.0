@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.moshe.arad.kafka.ConsumerToProducerQueue;
-import org.moshe.arad.kafka.events.LoggedInEvent;
-import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
 import org.moshe.arad.mongo.MongoEventsStore;
 import org.slf4j.Logger;

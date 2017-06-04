@@ -11,10 +11,7 @@ import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedEventLogoutConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
@@ -27,12 +24,8 @@ import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedEventConfig;
-import org.moshe.arad.kafka.consumers.config.WatcherRemovedEventConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
-import org.moshe.arad.kafka.consumers.events.GameRoomClosedEventConsumer;
-import org.moshe.arad.kafka.consumers.events.GameRoomClosedEventLogoutConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
-import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
@@ -41,7 +34,6 @@ import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedEventConsumer;
-import org.moshe.arad.kafka.consumers.events.WatcherRemovedEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -100,35 +92,15 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private ToLobbyPullEventsWithoutSavingCommandConfig toLobbyPullEventsWithoutSavingCommandConfig;
 	
-	private LoggedOutEventConsumer loggedOutEventConsumer;
-	
-	@Autowired
-	private LoggedOutEventConfig loggedOutEventConfig;
-	
 	private NewGameRoomOpenedEventConsumer newGameRoomOpenedEventConsumer;
 	
 	@Autowired
 	private NewGameRoomOpenedEventConfig newGameRoomOpenedEventConfig;
 	
-	private GameRoomClosedEventConsumer gameRoomClosedEventConsumer;
-	
-	@Autowired
-	private GameRoomClosedEventConfig gameRoomClosedEventConfig;
-	
 	private UserAddedAsWatcherEventConsumer userAddedAsWatcherEventConsumer;
 	
 	@Autowired
 	private UserAddedAsWatcherEventConfig userAddedAsWatcherEventConfig;
-	
-	private GameRoomClosedEventLogoutConsumer gameRoomClosedEventLogoutConsumer;
-	
-	@Autowired
-	private GameRoomClosedEventLogoutConfig gameRoomClosedEventLogoutConfig;
-	
-	private WatcherRemovedEventConsumer watcherRemovedEventConsumer;
-	
-	@Autowired
-	private WatcherRemovedEventConfig watcherRemovedEventConfig;
 	
 	private UserAddedAsSecondPlayerEventConsumer userAddedAsSecondPlayerEventConsumer;
 	
@@ -212,23 +184,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			existingUserJoinedLobbyEventConsumer = context.getBean(ExistingUserJoinedLobbyEventConsumer.class);
 			initSingleConsumer(existingUserJoinedLobbyEventConsumer, KafkaUtils.EXISTING_USER_JOINED_LOBBY_EVENT_TOPIC, existingUserJoinedLobbyEventConfig, null);
 			
-			loggedOutEventConsumer = context.getBean(LoggedOutEventConsumer.class);
-			initSingleConsumer(loggedOutEventConsumer, KafkaUtils.LOGGED_OUT_EVENT_TOPIC, loggedOutEventConfig, null);
-			
 			newGameRoomOpenedEventConsumer = context.getBean(NewGameRoomOpenedEventConsumer.class);
 			initSingleConsumer(newGameRoomOpenedEventConsumer, KafkaUtils.NEW_GAME_ROOM_OPENED_EVENT_TOPIC, newGameRoomOpenedEventConfig, null);
 			
-			gameRoomClosedEventConsumer = context.getBean(GameRoomClosedEventConsumer.class);
-			initSingleConsumer(gameRoomClosedEventConsumer, KafkaUtils.GAME_ROOM_CLOSED_EVENT_TOPIC, gameRoomClosedEventConfig, null);
-			
 			userAddedAsWatcherEventConsumer = context.getBean(UserAddedAsWatcherEventConsumer.class);
 			initSingleConsumer(userAddedAsWatcherEventConsumer, KafkaUtils.USER_ADDED_AS_WATCHER_EVENT_TOPIC, userAddedAsWatcherEventConfig, null);
-			
-			gameRoomClosedEventLogoutConsumer = context.getBean(GameRoomClosedEventLogoutConsumer.class);
-			initSingleConsumer(gameRoomClosedEventLogoutConsumer, KafkaUtils.GAME_ROOM_CLOSED_EVENT_LOGOUT_TOPIC, gameRoomClosedEventLogoutConfig, null);
-			
-			watcherRemovedEventConsumer = context.getBean(WatcherRemovedEventConsumer.class);
-			initSingleConsumer(watcherRemovedEventConsumer, KafkaUtils.WATCHER_REMOVED_EVENT_TOPIC, watcherRemovedEventConfig, null);
 			
 			userAddedAsSecondPlayerEventConsumer = context.getBean(UserAddedAsSecondPlayerEventConsumer.class);
 			initSingleConsumer(userAddedAsSecondPlayerEventConsumer, KafkaUtils.USER_ADDED_AS_SECOND_PLAYER_EVENT_TOPIC, userAddedAsSecondPlayerEventConfig, null);
@@ -246,12 +206,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
 					existingUserJoinedLobbyEventConsumer,
-					loggedOutEventConsumer,
 					newGameRoomOpenedEventConsumer,
-					gameRoomClosedEventConsumer,
 					userAddedAsWatcherEventConsumer,
-					gameRoomClosedEventLogoutConsumer,
-					watcherRemovedEventConsumer,
 					userAddedAsSecondPlayerEventConsumer,
 					userPermissionsUpdatedEventConsumer,
 					userPermissionsUpdatedAddedWatcherEventConsumer,

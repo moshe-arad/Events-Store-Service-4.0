@@ -4,10 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.moshe.arad.entities.GameRoom;
-import org.moshe.arad.kafka.events.GameRoomClosedEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
-import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
-import org.moshe.arad.kafka.events.WatcherRemovedEvent;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="gameRoomsEvents")
