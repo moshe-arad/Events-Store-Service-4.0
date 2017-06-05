@@ -12,6 +12,7 @@ import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsu
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
@@ -21,19 +22,24 @@ import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedEventConfig;
+import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLeftLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedEventConsumer;
+import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedLeftLobbyEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -122,6 +128,21 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserPermissionsUpdatedAddedSecondPlayerEventConfig userPermissionsUpdatedAddedSecondPlayerEventConfig;
 	
+	private LoggedOutEventConsumer loggedOutEventConsumer;
+	
+	@Autowired
+	private LoggedOutEventConfig loggedOutEventConfig;
+	
+	private LoggedOutUserLeftLobbyEventConsumer loggedOutUserLeftLobbyEventConsumer;
+	
+	@Autowired
+	private LoggedOutUserLeftLobbyEventConfig loggedOutUserLeftLobbyEventConfig;
+	
+	private UserPermissionsUpdatedLeftLobbyEventConsumer userPermissionsUpdatedLeftLobbyEventConsumer;
+	
+	@Autowired
+	private UserPermissionsUpdatedLeftLobbyEventConfig userPermissionsUpdatedLeftLobbyEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -202,6 +223,15 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userPermissionsUpdatedAddedSecondPlayerEventConsumer = context.getBean(UserPermissionsUpdatedAddedSecondPlayerEventConsumer.class);
 			initSingleConsumer(userPermissionsUpdatedAddedSecondPlayerEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_USER_ADDED_SECOND_PLAYER_EVENT_TOPIC, userPermissionsUpdatedAddedSecondPlayerEventConfig, null);
 			
+			loggedOutEventConsumer = context.getBean(LoggedOutEventConsumer.class);
+			initSingleConsumer(loggedOutEventConsumer, KafkaUtils.LOGGED_OUT_EVENT_TOPIC, loggedOutEventConfig, null);
+			
+			loggedOutUserLeftLobbyEventConsumer = context.getBean(LoggedOutUserLeftLobbyEventConsumer.class);
+			initSingleConsumer(loggedOutUserLeftLobbyEventConsumer, KafkaUtils.LOGGED_OUT_USER_LEFT_LOBBY_EVENT_TOPIC, loggedOutUserLeftLobbyEventConfig, null);
+			
+			userPermissionsUpdatedLeftLobbyEventConsumer = context.getBean(UserPermissionsUpdatedLeftLobbyEventConsumer.class);
+			initSingleConsumer(userPermissionsUpdatedLeftLobbyEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_USER_LEFT_LOBBY_EVENT_TOPIC, userPermissionsUpdatedLeftLobbyEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -211,7 +241,10 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					userAddedAsSecondPlayerEventConsumer,
 					userPermissionsUpdatedEventConsumer,
 					userPermissionsUpdatedAddedWatcherEventConsumer,
-					userPermissionsUpdatedAddedSecondPlayerEventConsumer));
+					userPermissionsUpdatedAddedSecondPlayerEventConsumer,
+					loggedOutEventConsumer,
+					loggedOutUserLeftLobbyEventConsumer,
+					userPermissionsUpdatedLeftLobbyEventConsumer));
 		}
 	}
 

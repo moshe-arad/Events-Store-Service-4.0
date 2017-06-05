@@ -11,18 +11,26 @@ import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
+import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
+import org.moshe.arad.kafka.events.LoggedOutUserLeftLobbyEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
-import org.moshe.arad.mongo.events.AddSecondPlayerMongoEvent;
-import org.moshe.arad.mongo.events.GameRoomMongoEvent;
-import org.moshe.arad.mongo.events.GameRoomWatcherMongoEvent;
+import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
-import org.moshe.arad.mongo.events.UserMongoEvent;
+import org.moshe.arad.mongo.events.LoggedInMongoEvent;
+import org.moshe.arad.mongo.events.LoggedOutMongoEvent;
+import org.moshe.arad.mongo.events.NewGameRoomOpenedMongoEvent;
+import org.moshe.arad.mongo.events.NewUserCreatedMongoEvent;
+import org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent;
+import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
+import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
+import org.moshe.arad.mongo.events.LoggedOutUserLeftLobbyMongoEvent;
+import org.moshe.arad.mongo.events.UserPermissionsUpdatedMongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +49,9 @@ public class MongoEventsStore {
 	
 	public void addNewUserCreatedEvent(NewUserCreatedEvent newUserCreatedEvent){
 		try{
-			UserMongoEvent newUserCreatedMongoEvent = UserMongoEvent.convertIntoMongoEvent(newUserCreatedEvent);
+			NewUserCreatedMongoEvent newUserCreatedMongoEvent = NewUserCreatedMongoEvent.convertIntoMongoEvent(newUserCreatedEvent);
 			
-			mongoTemplate.insert(newUserCreatedMongoEvent, "userEvents");
+			mongoTemplate.insert(newUserCreatedMongoEvent, "NewUserCreatedEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserCreatedEvent into mongo events store");
@@ -55,9 +63,9 @@ public class MongoEventsStore {
 	
 	public void addNewUserJoinedLobbyEvent(NewUserJoinedLobbyEvent newUserJoinedLobbyEvent){
 		try{
-			UserMongoEvent newUserJoinedLobbyMongoEvent = UserMongoEvent.convertIntoMongoEvent(newUserJoinedLobbyEvent);
+			NewUserJoinedLobbyMongoEvent newUserJoinedLobbyMongoEvent = NewUserJoinedLobbyMongoEvent.convertIntoMongoEvent(newUserJoinedLobbyEvent);
 			
-			mongoTemplate.insert(newUserJoinedLobbyMongoEvent, "userEvents");
+			mongoTemplate.insert(newUserJoinedLobbyMongoEvent, "NewUserJoinedLobbyEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserJoinedLobbyEvent into mongo events store");
@@ -70,9 +78,9 @@ public class MongoEventsStore {
 	public void addLoggedInEvent(LoggedInEvent loggedInEvent) {
 		try{
 			
-			UserMongoEvent loggedInMongoEvent = UserMongoEvent.convertIntoMongoEvent(loggedInEvent);
+			LoggedInMongoEvent loggedInMongoEvent = LoggedInMongoEvent.convertIntoMongoEvent(loggedInEvent);
 			
-			mongoTemplate.insert(loggedInMongoEvent, "userEvents");
+			mongoTemplate.insert(loggedInMongoEvent, "LoggedInEvents");
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save newUserJoinedLobbyEvent into mongo events store");
@@ -83,9 +91,9 @@ public class MongoEventsStore {
 	
 	public void addExistingUserJoinedLobbyEvent(ExistingUserJoinedLobbyEvent existingUserJoinedLobbyEvent) {
 		try{
-			UserMongoEvent existingUserJoinedLobbyMongoEvent = UserMongoEvent.convertIntoMongoEvent(existingUserJoinedLobbyEvent);
+			ExistingUserJoinedLobbyMongoEvent existingUserJoinedLobbyMongoEvent = ExistingUserJoinedLobbyMongoEvent.convertIntoMongoEvent(existingUserJoinedLobbyEvent);
 			
-			mongoTemplate.insert(existingUserJoinedLobbyMongoEvent, "userEvents");		
+			mongoTemplate.insert(existingUserJoinedLobbyMongoEvent, "ExistingUserJoinedLobbyEvents");		
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
@@ -96,12 +104,12 @@ public class MongoEventsStore {
 	
 	public void addNewGameRoomEvent(NewGameRoomOpenedEvent newGameRoomOpenedEvent) {
 		try{
-			GameRoomMongoEvent gameRoomMongoEvent = GameRoomMongoEvent.convertIntoMongoEvent(newGameRoomOpenedEvent);
+			NewGameRoomOpenedMongoEvent newGameRoomOpenedMongoEvent = NewGameRoomOpenedMongoEvent.convertIntoMongoEvent(newGameRoomOpenedEvent);
 			
-			mongoTemplate.insert(gameRoomMongoEvent, "gameRoomsEvents");		
+			mongoTemplate.insert(newGameRoomOpenedMongoEvent, "NewGameRoomOpenedEvents");		
 		}
 		catch (Exception ex) {
-			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error("Failed to save NewGameRoomOpenedEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}		
@@ -109,12 +117,12 @@ public class MongoEventsStore {
 	
 	public void addUserAddedAsWatcherEvent(UserAddedAsWatcherEvent userAddedAsWatcherEvent) {
 		try{
-			GameRoomWatcherMongoEvent gameRoomMongoEvent = (GameRoomWatcherMongoEvent) GameRoomWatcherMongoEvent.convertIntoMongoEvent(userAddedAsWatcherEvent);
+			UserAddedAsWatcherMongoEvent userAddedAsWatcherMongoEvent = UserAddedAsWatcherMongoEvent.convertIntoMongoEvent(userAddedAsWatcherEvent);
 			
-			mongoTemplate.insert(gameRoomMongoEvent, "gameRoomsEvents");		
+			mongoTemplate.insert(userAddedAsWatcherMongoEvent, "UserAddedAsWatcherEvents");		
 		}
 		catch (Exception ex) {
-			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error("Failed to save UserAddedAsWatcherEvents into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}		
@@ -122,12 +130,12 @@ public class MongoEventsStore {
 	
 	public void addUserAddedAsSecondPlayerEvent(UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent) {
 		try{
-			AddSecondPlayerMongoEvent addSecondPlayerMongoEvent = (AddSecondPlayerMongoEvent) AddSecondPlayerMongoEvent.convertIntoMongoEvent(userAddedAsSecondPlayerEvent);
+			UserAddedAsSecondPlayerMongoEvent userAddedAsSecondPlayerMongoEvent = UserAddedAsSecondPlayerMongoEvent.convertIntoMongoEvent(userAddedAsSecondPlayerEvent);
 			
-			mongoTemplate.insert(addSecondPlayerMongoEvent, "gameRoomsEvents");		
+			mongoTemplate.insert(userAddedAsSecondPlayerMongoEvent, "UserAddedAsSecondPlayerEvents");		
 		}
 		catch (Exception ex) {
-			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error("Failed to save UserAddedAsSecondPlayerEvents into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}		
@@ -135,51 +143,109 @@ public class MongoEventsStore {
 	
 	public void addUserPermissionsUpdatedEvent(UserPermissionsUpdatedEvent userPermissionsUpdatedEvent) {
 		try{
-			UserMongoEvent userPermissionsUpdatedMongoEvent = UserMongoEvent.convertIntoMongoEvent(userPermissionsUpdatedEvent);
+			UserPermissionsUpdatedMongoEvent userPermissionsUpdatedMongoEvent = UserPermissionsUpdatedMongoEvent.convertIntoMongoEvent(userPermissionsUpdatedEvent);
 			
-			mongoTemplate.insert(userPermissionsUpdatedMongoEvent, "userEvents");		
+			mongoTemplate.insert(userPermissionsUpdatedMongoEvent, "UserPermissionsUpdatedEvents");		
 		}
 		catch (Exception ex) {
-			logger.error("Failed to save existingUserJoinedLobbyEvent into mongo events store");
+			logger.error("Failed to save UserPermissionsUpdatedEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	public void addLoggedOutEvent(LoggedOutEvent loggedOutEvent) {
+		try{
+			LoggedOutMongoEvent loggedOutMongoEvent = LoggedOutMongoEvent.convertIntoMongoEvent(loggedOutEvent);
+			
+			mongoTemplate.insert(loggedOutMongoEvent, "LoggedOutEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save LoggedOutEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	public void addLoggedOutUserLeftLobbyEvent(LoggedOutUserLeftLobbyEvent userLeftLobbyEvent) {
+		try{
+			LoggedOutUserLeftLobbyMongoEvent userLeftLobbyMongoEvent = LoggedOutUserLeftLobbyMongoEvent.convertIntoMongoEvent(userLeftLobbyEvent);
+			
+			mongoTemplate.insert(userLeftLobbyMongoEvent, "LoggedOutUserLeftLobbyEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save UserLeftLobbyEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
 	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
-		LinkedList<UserMongoEvent> userMongoEvents = null;		
-		LinkedList<GameRoomMongoEvent> gameRoomMongoEvent = null;
+		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
+		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
+		LinkedList<LoggedInMongoEvent> loggedInMongoEvents = null;
+		LinkedList<ExistingUserJoinedLobbyMongoEvent> existingUserJoinedLobbyMongoEvents = null;
+		LinkedList<NewGameRoomOpenedMongoEvent> newGameRoomOpenedMongoEvents = null;
+		LinkedList<UserAddedAsWatcherMongoEvent> userAddedAsWatcherMongoEvents = null;
+		LinkedList<UserAddedAsSecondPlayerMongoEvent> userAddedAsSecondPlayerMongoEvents = null;
+		LinkedList<UserPermissionsUpdatedMongoEvent> userPermissionsUpdatedMongoEvents = null;
+		LinkedList<LoggedOutMongoEvent> loggedOutMongoEvents = null;
+		LinkedList<LoggedOutUserLeftLobbyMongoEvent> userLeftLobbyMongoEvents = null;
 		
 		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>(100000);
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
 		
 		if(fromDate == null){
 			if(serviceName.equals(Services.Users.name())){
-				userMongoEvents = new LinkedList<>(mongoTemplate.findAll(UserMongoEvent.class));
+				newUserCreatedMongoEvents = new LinkedList<>(mongoTemplate.findAll(NewUserCreatedMongoEvent.class));
+				newUserJoinedLobbyMongoEvents = new LinkedList<>(mongoTemplate.findAll(NewUserJoinedLobbyMongoEvent.class));
+				loggedInMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedInMongoEvent.class));
+				existingUserJoinedLobbyMongoEvents = new LinkedList<>(mongoTemplate.findAll(ExistingUserJoinedLobbyMongoEvent.class));
+				userPermissionsUpdatedMongoEvents = new LinkedList<>(mongoTemplate.findAll(UserPermissionsUpdatedMongoEvent.class));
+				loggedOutMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedOutMongoEvent.class));
+				userLeftLobbyMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedOutUserLeftLobbyMongoEvent.class));
 			}
 			else if(serviceName.equals(Services.Lobby.name())){
-				gameRoomMongoEvent = new LinkedList<>(mongoTemplate.findAll(GameRoomMongoEvent.class));
-			}			
+				newGameRoomOpenedMongoEvents = new LinkedList<>(mongoTemplate.findAll(NewGameRoomOpenedMongoEvent.class));
+				userAddedAsWatcherMongoEvents = new LinkedList<>(mongoTemplate.findAll(UserAddedAsWatcherMongoEvent.class));
+				userAddedAsSecondPlayerMongoEvents = new LinkedList<>(mongoTemplate.findAll(UserAddedAsSecondPlayerMongoEvent.class));
+			}					
 		}
 		else{
 			Criteria criteria = Criteria.where("arrived").gte(fromDate);
 			Query query = new Query(criteria);
 			
 			if(serviceName.equals(Services.Users.name())){
-				userMongoEvents = new LinkedList<>(mongoTemplate.find(query, UserMongoEvent.class));								
+				newUserCreatedMongoEvents = new LinkedList<>(mongoTemplate.find(query, NewUserCreatedMongoEvent.class));
+				newUserJoinedLobbyMongoEvents = new LinkedList<>(mongoTemplate.find(query, NewUserJoinedLobbyMongoEvent.class));
+				loggedInMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedInMongoEvent.class));
+				existingUserJoinedLobbyMongoEvents = new LinkedList<>(mongoTemplate.find(query, ExistingUserJoinedLobbyMongoEvent.class));
+				userPermissionsUpdatedMongoEvents = new LinkedList<>(mongoTemplate.find(query, UserPermissionsUpdatedMongoEvent.class));
+				loggedOutMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedOutMongoEvent.class));
+				userLeftLobbyMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedOutUserLeftLobbyMongoEvent.class));
 			}
 			else if(serviceName.equals(Services.Lobby.name())){
-				gameRoomMongoEvent = new LinkedList<>(mongoTemplate.find(query, GameRoomMongoEvent.class));
-			}			
+				newGameRoomOpenedMongoEvents = new LinkedList<>(mongoTemplate.find(query, NewGameRoomOpenedMongoEvent.class));
+				userAddedAsWatcherMongoEvents = new LinkedList<>(mongoTemplate.find(query, UserAddedAsWatcherMongoEvent.class));
+				userAddedAsSecondPlayerMongoEvents = new LinkedList<>(mongoTemplate.find(query, UserAddedAsSecondPlayerMongoEvent.class));
+			}				
 		}
 		
 		if(serviceName.equals(Services.Users.name())){
-			mongoEvents.addAll(userMongoEvents);
+			mongoEvents.addAll(newUserCreatedMongoEvents);
+			mongoEvents.addAll(newUserJoinedLobbyMongoEvents);
+			mongoEvents.addAll(loggedInMongoEvents);
+			mongoEvents.addAll(existingUserJoinedLobbyMongoEvents);
+			mongoEvents.addAll(userPermissionsUpdatedMongoEvents);
+			mongoEvents.addAll(loggedOutMongoEvents);
+			mongoEvents.addAll(userLeftLobbyMongoEvents);
 		}
 		else if(serviceName.equals(Services.Lobby.name())){
-			mongoEvents.addAll(gameRoomMongoEvent);
+			mongoEvents.addAll(newGameRoomOpenedMongoEvents);
+			mongoEvents.addAll(userAddedAsWatcherMongoEvents);
+			mongoEvents.addAll(userAddedAsSecondPlayerMongoEvents);
 		}
-		
+			
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
 		
 		while(it.hasNext()){
@@ -197,51 +263,59 @@ public class MongoEventsStore {
 		String clazz = mongoEvent.getClazz();
 		
 		if(clazz.equals("NewUserCreatedEvent")){
-			UserMongoEvent newUserCreatedEventMongo = (UserMongoEvent)mongoEvent; 
-			NewUserCreatedEvent newUserCreatedEvent = new NewUserCreatedEvent(uuid, newUserCreatedEventMongo.getServiceId(), newUserCreatedEventMongo.getEventId(), newUserCreatedEventMongo.getArrived(), "NewUserCreatedEvent",newUserCreatedEventMongo.getBackgammonUser());
+			NewUserCreatedMongoEvent newUserCreatedMongoEvent = (NewUserCreatedMongoEvent)mongoEvent; 
+			NewUserCreatedEvent newUserCreatedEvent = new NewUserCreatedEvent(uuid, newUserCreatedMongoEvent.getServiceId(), newUserCreatedMongoEvent.getEventId(), newUserCreatedMongoEvent.getArrived(), "NewUserCreatedEvent",newUserCreatedMongoEvent.getBackgammonUser());
 			return newUserCreatedEvent;
 		}
 		else if(clazz.equals("NewUserJoinedLobbyEvent")){
-			UserMongoEvent newUserJoinedLobbyEventMongo = (UserMongoEvent)mongoEvent;
-			NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = new NewUserJoinedLobbyEvent(uuid, newUserJoinedLobbyEventMongo.getServiceId(), newUserJoinedLobbyEventMongo.getEventId(), newUserJoinedLobbyEventMongo.getArrived(), "NewUserJoinedLobbyEvent", newUserJoinedLobbyEventMongo.getBackgammonUser());
+			NewUserJoinedLobbyMongoEvent newUserJoinedLobbyMongoEvent = (NewUserJoinedLobbyMongoEvent)mongoEvent;
+			NewUserJoinedLobbyEvent newUserJoinedLobbyEvent = new NewUserJoinedLobbyEvent(uuid, newUserJoinedLobbyMongoEvent.getServiceId(), newUserJoinedLobbyMongoEvent.getEventId(), newUserJoinedLobbyMongoEvent.getArrived(), "NewUserJoinedLobbyEvent", newUserJoinedLobbyMongoEvent.getBackgammonUser());
 			return newUserJoinedLobbyEvent;
 		}
 		else if(clazz.equals("LoggedInEvent")){
-			UserMongoEvent loggedInMongoEvent = (UserMongoEvent)mongoEvent; 
+			LoggedInMongoEvent loggedInMongoEvent = (LoggedInMongoEvent)mongoEvent; 
 			LoggedInEvent loggedInEvent = new LoggedInEvent(uuid, loggedInMongoEvent.getServiceId(), loggedInMongoEvent.getEventId(), loggedInMongoEvent.getArrived(), "LoggedInEvent",loggedInMongoEvent.getBackgammonUser());
 			return loggedInEvent;
 		}
 		else if(clazz.equals("ExistingUserJoinedLobbyEvent")){
-			UserMongoEvent existingUserJoinedLobbyMongoEvent = (UserMongoEvent)mongoEvent;
+			ExistingUserJoinedLobbyMongoEvent existingUserJoinedLobbyMongoEvent = (ExistingUserJoinedLobbyMongoEvent)mongoEvent;
 			ExistingUserJoinedLobbyEvent existingUserJoinedLobbyEvent = new ExistingUserJoinedLobbyEvent(uuid, existingUserJoinedLobbyMongoEvent.getServiceId(), existingUserJoinedLobbyMongoEvent.getEventId(), existingUserJoinedLobbyMongoEvent.getArrived(), "ExistingUserJoinedLobbyEvent", existingUserJoinedLobbyMongoEvent.getBackgammonUser());
 			return existingUserJoinedLobbyEvent;
 		}
 		else if(clazz.equals("NewGameRoomOpenedEvent")){
-			GameRoomMongoEvent newGameRoomOpenedMongoEvent = (GameRoomMongoEvent)mongoEvent;
+			NewGameRoomOpenedMongoEvent newGameRoomOpenedMongoEvent = (NewGameRoomOpenedMongoEvent)mongoEvent;
 			NewGameRoomOpenedEvent newGameRoomOpenedEvent = new NewGameRoomOpenedEvent(uuid, newGameRoomOpenedMongoEvent.getServiceId(), newGameRoomOpenedMongoEvent.getEventId(), newGameRoomOpenedMongoEvent.getArrived(), "NewGameRoomOpenedEvent", newGameRoomOpenedMongoEvent.getGameRoom());
 			return newGameRoomOpenedEvent;
 		}
 		else if(clazz.equals("UserAddedAsWatcherEvent")){
-			GameRoomWatcherMongoEvent gameRoomWatcherMongoEvent = (GameRoomWatcherMongoEvent)mongoEvent;
-			UserAddedAsWatcherEvent userAddedAsWatcherEvent = new UserAddedAsWatcherEvent(uuid, gameRoomWatcherMongoEvent.getServiceId(), gameRoomWatcherMongoEvent.getEventId(), gameRoomWatcherMongoEvent.getArrived(), "UserAddedAsWatcherEvent", gameRoomWatcherMongoEvent.getNewWatcher(), gameRoomWatcherMongoEvent.getGameRoom());
+			UserAddedAsWatcherMongoEvent userAddedAsWatcherMongoEvent = (UserAddedAsWatcherMongoEvent)mongoEvent;
+			UserAddedAsWatcherEvent userAddedAsWatcherEvent = new UserAddedAsWatcherEvent(uuid, userAddedAsWatcherMongoEvent.getServiceId(), userAddedAsWatcherMongoEvent.getEventId(), userAddedAsWatcherMongoEvent.getArrived(), "UserAddedAsWatcherEvent", userAddedAsWatcherMongoEvent.getNewWatcher(), userAddedAsWatcherMongoEvent.getGameRoom());
 			return userAddedAsWatcherEvent;
 		}	
 		else if(clazz.equals("UserAddedAsSecondPlayerEvent")){
-			AddSecondPlayerMongoEvent addSecondPlayerMongoEvent = (AddSecondPlayerMongoEvent)mongoEvent;
-			UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent = new UserAddedAsSecondPlayerEvent(uuid, addSecondPlayerMongoEvent.getServiceId(), addSecondPlayerMongoEvent.getEventId(), addSecondPlayerMongoEvent.getArrived(), "UserAddedAsSecondPlayerEvent", addSecondPlayerMongoEvent.getSecondPlayer(), addSecondPlayerMongoEvent.getGameRoom());
+			UserAddedAsSecondPlayerMongoEvent userAddedAsSecondPlayerMongoEvent = (UserAddedAsSecondPlayerMongoEvent)mongoEvent;
+			UserAddedAsSecondPlayerEvent userAddedAsSecondPlayerEvent = new UserAddedAsSecondPlayerEvent(uuid, userAddedAsSecondPlayerMongoEvent.getServiceId(), userAddedAsSecondPlayerMongoEvent.getEventId(), userAddedAsSecondPlayerMongoEvent.getArrived(), "UserAddedAsSecondPlayerEvent", userAddedAsSecondPlayerMongoEvent.getSecondPlayer(), userAddedAsSecondPlayerMongoEvent.getGameRoom());
 			return userAddedAsSecondPlayerEvent;
 		}
 		else if(clazz.equals("UserPermissionsUpdatedEvent")){
-			UserMongoEvent userPermissionsUpdatedMongoEvent = (UserMongoEvent)mongoEvent;
+			UserPermissionsUpdatedMongoEvent userPermissionsUpdatedMongoEvent = (UserPermissionsUpdatedMongoEvent)mongoEvent;
 			UserPermissionsUpdatedEvent userPermissionsUpdatedEvent = new UserPermissionsUpdatedEvent(uuid, userPermissionsUpdatedMongoEvent.getServiceId(), userPermissionsUpdatedMongoEvent.getEventId(), userPermissionsUpdatedMongoEvent.getArrived(), "UserPermissionsUpdatedEvent", userPermissionsUpdatedMongoEvent.getBackgammonUser());
 			return userPermissionsUpdatedEvent;
+		}
+		else if(clazz.equals("LoggedOutEvent")){
+			LoggedOutMongoEvent loggedOutMongoEvent = (LoggedOutMongoEvent)mongoEvent;
+			LoggedOutEvent loggedOutEvent = new LoggedOutEvent(uuid, loggedOutMongoEvent.getServiceId(), loggedOutMongoEvent.getEventId(), loggedOutMongoEvent.getArrived(), "LoggedOutEvent", loggedOutMongoEvent.getBackgammonUser());
+			return loggedOutEvent;
+		}
+		else if(clazz.equals("LoggedOutUserLeftLobbyEvent")){
+			LoggedOutUserLeftLobbyMongoEvent userLeftLobbyMongoEvent = (LoggedOutUserLeftLobbyMongoEvent)mongoEvent;
+			LoggedOutUserLeftLobbyEvent userLeftLobbyEvent = new LoggedOutUserLeftLobbyEvent(uuid, userLeftLobbyMongoEvent.getServiceId(), userLeftLobbyMongoEvent.getEventId(), userLeftLobbyMongoEvent.getArrived(), "LoggedOutUserLeftLobbyEvent", userLeftLobbyMongoEvent.getBackgammonUser());
+			return userLeftLobbyEvent;
 		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}
-
-	
+	}	
 }
 
 

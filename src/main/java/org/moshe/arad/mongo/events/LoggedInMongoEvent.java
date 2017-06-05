@@ -6,14 +6,15 @@ import java.util.UUID;
 import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
+import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="userEvents")
-public class UserMongoEvent implements IMongoEvent {
+@Document(collection="LoggedInEvents")
+public class LoggedInMongoEvent implements IMongoEvent {
 
 	@Id
 	private String mongoEventId;
@@ -24,11 +25,11 @@ public class UserMongoEvent implements IMongoEvent {
 	private String clazz;
 	private BackgammonUser backgammonUser;
 
-	public UserMongoEvent() {
+	public LoggedInMongoEvent() {
 		
 	}
 
-	public UserMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
+	public LoggedInMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
 			BackgammonUser backgammonUser) {
 		super();
 		this.mongoEventId = mongoEventId;
@@ -42,11 +43,12 @@ public class UserMongoEvent implements IMongoEvent {
 	@Override
 	public String toString() {
 		return "LoggedInMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId=" + serviceId
-				+ ", eventId=" + eventId + ", arrived=" + arrived + ", backgammonUser=" + backgammonUser + "]";
+				+ ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", backgammonUser="
+				+ backgammonUser + "]";
 	}
-	
-	public static UserMongoEvent convertIntoMongoEvent(LoggedInEvent event) {
-		UserMongoEvent loggedInMongoEvent = new UserMongoEvent();
+
+	public static LoggedInMongoEvent convertIntoMongoEvent(LoggedInEvent event) {
+		LoggedInMongoEvent loggedInMongoEvent = new LoggedInMongoEvent();
 		
 		loggedInMongoEvent.setUuid(event.getUuid());
 		loggedInMongoEvent.setArrived(event.getArrived());
@@ -54,50 +56,6 @@ public class UserMongoEvent implements IMongoEvent {
 		loggedInMongoEvent.setClazz(event.getClazz());
 		
 		return loggedInMongoEvent;
-	}
-
-	public static UserMongoEvent convertIntoMongoEvent(ExistingUserJoinedLobbyEvent event) {
-		UserMongoEvent existingUserJoinedLobbyMongoEvent = new UserMongoEvent();
-		
-		existingUserJoinedLobbyMongoEvent.setUuid(event.getUuid());
-		existingUserJoinedLobbyMongoEvent.setArrived(event.getArrived());
-		existingUserJoinedLobbyMongoEvent.setBackgammonUser(event.getBackgammonUser());
-		existingUserJoinedLobbyMongoEvent.setClazz(event.getClazz());
-		
-		return existingUserJoinedLobbyMongoEvent;
-	}
-	
-	public static UserMongoEvent convertIntoMongoEvent(NewUserCreatedEvent event) {
-		UserMongoEvent newUserCreatedMongoEvent = new UserMongoEvent();
-		
-		newUserCreatedMongoEvent.setUuid(event.getUuid());
-		newUserCreatedMongoEvent.setArrived(event.getArrived());
-		newUserCreatedMongoEvent.setBackgammonUser(event.getBackgammonUser());
-		newUserCreatedMongoEvent.setClazz(event.getClazz());
-		
-		return newUserCreatedMongoEvent;
-	}
-	
-	public static UserMongoEvent convertIntoMongoEvent(NewUserJoinedLobbyEvent event) {
-		UserMongoEvent newUserJoinedLobbyMongoEvent = new UserMongoEvent();
-		
-		newUserJoinedLobbyMongoEvent.setUuid(event.getUuid());
-		newUserJoinedLobbyMongoEvent.setArrived(event.getArrived());
-		newUserJoinedLobbyMongoEvent.setBackgammonUser(event.getBackgammonUser());
-		newUserJoinedLobbyMongoEvent.setClazz(event.getClazz());
-		
-		return newUserJoinedLobbyMongoEvent;
-	}
-	
-	public static UserMongoEvent convertIntoMongoEvent(UserPermissionsUpdatedEvent event) {
-		UserMongoEvent userPermissionsUpdatedEvent = new UserMongoEvent();
-		
-		userPermissionsUpdatedEvent.setUuid(event.getUuid());
-		userPermissionsUpdatedEvent.setArrived(event.getArrived());
-		userPermissionsUpdatedEvent.setBackgammonUser(event.getBackgammonUser());
-		userPermissionsUpdatedEvent.setClazz(event.getClazz());
-		
-		return userPermissionsUpdatedEvent;
 	}
 	
 	public String getMongoEventId() {

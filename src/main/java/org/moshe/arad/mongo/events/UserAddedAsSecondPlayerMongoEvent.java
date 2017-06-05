@@ -4,12 +4,12 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.moshe.arad.entities.GameRoom;
-import org.moshe.arad.kafka.events.NewGameRoomOpenedEvent;
+import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="gameRoomsEvents")
-public class GameRoomMongoEvent implements IMongoEvent{
+@Document(collection="UserAddedAsSecondPlayerEvents")
+public class UserAddedAsSecondPlayerMongoEvent implements IMongoEvent {
 
 	@Id
 	private String mongoEventId;
@@ -19,13 +19,14 @@ public class GameRoomMongoEvent implements IMongoEvent{
 	private Date arrived;
 	private String clazz;
 	private GameRoom gameRoom;
+	private String secondPlayer;
 	
-	public GameRoomMongoEvent() {
+	public UserAddedAsSecondPlayerMongoEvent() {
 	
 	}
-	
-	public GameRoomMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived, String clazz,
-			GameRoom gameRoom) {
+
+	public UserAddedAsSecondPlayerMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
+			String clazz, GameRoom gameRoom, String secondPlayer) {
 		super();
 		this.mongoEventId = mongoEventId;
 		this.uuid = uuid;
@@ -34,22 +35,24 @@ public class GameRoomMongoEvent implements IMongoEvent{
 		this.arrived = arrived;
 		this.clazz = clazz;
 		this.gameRoom = gameRoom;
+		this.secondPlayer = secondPlayer;
 	}
 
 	@Override
 	public String toString() {
-		return "GameRoomMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId=" + serviceId
-				+ ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", gameRoom=" + gameRoom + "]";
+		return "UserAddedAsSecondPlayerMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId="
+				+ serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", gameRoom="
+				+ gameRoom + ", secondPlayer=" + secondPlayer + "]";
 	}
 
-	public static GameRoomMongoEvent convertIntoMongoEvent(NewGameRoomOpenedEvent event) {
-		GameRoomMongoEvent gameRoomMongoEvent = new GameRoomMongoEvent();
+	public static UserAddedAsSecondPlayerMongoEvent convertIntoMongoEvent(UserAddedAsSecondPlayerEvent event) {
+		UserAddedAsSecondPlayerMongoEvent gameRoomMongoEvent = new UserAddedAsSecondPlayerMongoEvent();
 		
 		gameRoomMongoEvent.setUuid(event.getUuid());
 		gameRoomMongoEvent.setArrived(event.getArrived());
 		gameRoomMongoEvent.setGameRoom(event.getGameRoom());
 		gameRoomMongoEvent.setClazz(event.getClazz());
-		
+		gameRoomMongoEvent.setSecondPlayer(event.getUsername());
 		return gameRoomMongoEvent;
 	}
 
@@ -107,5 +110,13 @@ public class GameRoomMongoEvent implements IMongoEvent{
 
 	public void setGameRoom(GameRoom gameRoom) {
 		this.gameRoom = gameRoom;
-	}	
+	}
+
+	public String getSecondPlayer() {
+		return secondPlayer;
+	}
+
+	public void setSecondPlayer(String secondPlayer) {
+		this.secondPlayer = secondPlayer;
+	}
 }

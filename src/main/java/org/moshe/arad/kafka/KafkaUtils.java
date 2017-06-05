@@ -27,7 +27,7 @@ public class KafkaUtils {
 	public static final String EXISTING_USER_JOINED_LOBBY_EVENT_GROUP = "ExistingUserJoinedLobbyEventGroup1";
 	public static final String EXISTING_USER_JOINED_LOBBY_EVENT_TOPIC = "Existing-User-Joined-Lobby-Event";
 	public static final String LOGGED_OUT_EVENT_TOPIC = "Logged-Out-Event";
-	public static final String LOGGED_OUT_EVENT_GROUP = "LoggedOutEventGroup2";
+	public static final String LOGGED_OUT_EVENT_GROUP = "LoggedOutEventGroup1";
 	public static final String LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC = "Lobby-Service-Pull-Events-With-Saving-Command";
 	public static final String LOBBY_SERVICE_PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC = "Lobby-Service-Pull-Events-Without-Saving-Command";
 	public static final String TO_LOBBY_PULL_EVENTS_WITHOUT_SAVING_COMMAND_GROUP = "ToLobbyPullEventsWithoutSavingCommandGroup";
@@ -50,4 +50,8 @@ public class KafkaUtils {
 	public static final String USER_PERMISSIONS_UPDATED_USER_ADDED_WATCHER_EVENT_TOPIC = "User-Permissions-Updated-User-Added-Watcher-Event";
 	public static final String USER_PERMISSIONS_UPDATED_ADDED_SECOND_PLAYER_EVENT_GROUP = "UserPermissionsUpdatedUserAdded-SecondPlayerEventGroup1";
 	public static final String USER_PERMISSIONS_UPDATED_USER_ADDED_SECOND_PLAYER_EVENT_TOPIC = "User-Permissions-Updated-User-Added-Second-Player-Event";
+	public static final String LOGGED_OUT_USER_LEFT_LOBBY_EVENT_GROUP = "LoggedOutUserLeftLobbyEventGroup1";
+	public static final String LOGGED_OUT_USER_LEFT_LOBBY_EVENT_TOPIC = "Logged-Out-User-Left-Lobby-Event";
+	public static final String USER_PERMISSIONS_UPDATED_LEFT_LOBBY_EVENT_GROUP = "UserPermissionsUpdatedLeftLobbyEventGroup1";
+	public static final String USER_PERMISSIONS_UPDATED_USER_LEFT_LOBBY_EVENT_TOPIC = "User-Permissions-Updated-User-Left-Lobby-Event";
 }
