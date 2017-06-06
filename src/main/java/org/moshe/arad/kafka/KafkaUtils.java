@@ -54,4 +54,10 @@ public class KafkaUtils {
 	public static final String LOGGED_OUT_USER_LEFT_LOBBY_EVENT_TOPIC = "Logged-Out-User-Left-Lobby-Event";
 	public static final String USER_PERMISSIONS_UPDATED_LEFT_LOBBY_EVENT_GROUP = "UserPermissionsUpdatedLeftLobbyEventGroup1";
 	public static final String USER_PERMISSIONS_UPDATED_USER_LEFT_LOBBY_EVENT_TOPIC = "User-Permissions-Updated-User-Left-Lobby-Event";
+	public static final String LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_GROUP = "LoggedOutOpenByLeftBeforeGameStartedEventGroup1";
+	public static final String LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_TOPIC = "Logged-Out-Openby-Left-Before-Game-Started-Event";
+	public static final String USER_PERMISSIONS_UPDATED_LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_GROUP = "UserPermissionsUpdatedLoggedOutOpenByLeftBeforeGameStartedEventGroup1";
+	public static final String USER_PERMISSIONS_UPDATED_LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_TOPIC = "User-Permissions-Updated-Logged-Out-Openby-Left-Before-Game-Started-Event";
+	public static final String GAME_ROOM_CLOSED_LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_GROUP = "GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventGroup1";
+	public static final String GAME_ROOM_CLOSED_LOGGED_OUT_OPENBY_LEFT_BEFORE_GAME_STARTED_EVENT_TOPIC = "Game-Room-Closed-Logged-Out-Openby-Left-Before-Game-Started-Event";
 }
