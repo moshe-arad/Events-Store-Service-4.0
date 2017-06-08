@@ -22,6 +22,7 @@ import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.kafka.events.LoggedOutUserLeftLobbyEvent;
+import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
@@ -36,6 +37,7 @@ import org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutUserLeftLobbyMongoEvent;
+import org.moshe.arad.mongo.events.LoggedOutWatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.UserPermissionsUpdatedMongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,6 +228,19 @@ public class MongoEventsStore {
 		}
 	}	
 	
+	public void addLoggedOutWatcherLeftLast(LoggedOutWatcherLeftLastEvent loggedOutWatcherLeftLastEvent) {
+		try{
+			LoggedOutWatcherLeftLastMongoEvent mongoEvent = LoggedOutWatcherLeftLastMongoEvent.convertIntoMongoEvent(loggedOutWatcherLeftLastEvent);
+			
+			mongoTemplate.insert(mongoEvent, "LoggedOutWatcherLeftLastEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save LoggedOutWatcherLeftLastMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -240,6 +255,7 @@ public class MongoEventsStore {
 		LinkedList<LoggedOutOpenByLeftBeforeGameStartedMongoEvent> loggedOutOpenByLeftBeforeGameStartedMongoEvents = null;
 		LinkedList<GameRoomClosedMongoEvent> gameRoomClosedMongoEvents = null;
 		LinkedList<LoggedOutOpenByLeftMongoEvent> loggedOutOpenByLeftMongoEvents = null;
+		LinkedList<LoggedOutWatcherLeftLastMongoEvent> loggedOutWatcherLeftLastMongoEvents = null;
 		
 		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>(100000);
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
@@ -261,6 +277,7 @@ public class MongoEventsStore {
 				loggedOutOpenByLeftBeforeGameStartedMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedOutOpenByLeftBeforeGameStartedMongoEvent.class));
 				gameRoomClosedMongoEvents = new LinkedList<>(mongoTemplate.findAll(GameRoomClosedMongoEvent.class));
 				loggedOutOpenByLeftMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedOutOpenByLeftMongoEvent.class));
+				loggedOutWatcherLeftLastMongoEvents = new LinkedList<>(mongoTemplate.findAll(LoggedOutWatcherLeftLastMongoEvent.class));
 			}					
 		}
 		else{
@@ -283,6 +300,7 @@ public class MongoEventsStore {
 				loggedOutOpenByLeftBeforeGameStartedMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedOutOpenByLeftBeforeGameStartedMongoEvent.class));
 				gameRoomClosedMongoEvents = new LinkedList<>(mongoTemplate.find(query, GameRoomClosedMongoEvent.class));
 				loggedOutOpenByLeftMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedOutOpenByLeftMongoEvent.class));
+				loggedOutWatcherLeftLastMongoEvents = new LinkedList<>(mongoTemplate.find(query, LoggedOutWatcherLeftLastMongoEvent.class));
 			}				
 		}
 		
@@ -302,6 +320,7 @@ public class MongoEventsStore {
 			mongoEvents.addAll(loggedOutOpenByLeftBeforeGameStartedMongoEvents);
 			mongoEvents.addAll(gameRoomClosedMongoEvents);
 			mongoEvents.addAll(loggedOutOpenByLeftMongoEvents);
+			mongoEvents.addAll(loggedOutWatcherLeftLastMongoEvents);
 		}
 			
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
@@ -385,10 +404,15 @@ public class MongoEventsStore {
 			LoggedOutOpenByLeftEvent loggedOutOpenByLeftEvent = new LoggedOutOpenByLeftEvent(uuid, loggedOutOpenByLeftMongoEvent.getServiceId(), loggedOutOpenByLeftMongoEvent.getEventId(), loggedOutOpenByLeftMongoEvent.getArrived(), "LoggedOutOpenByLeftEvent", loggedOutOpenByLeftMongoEvent.getOpenBy(), loggedOutOpenByLeftMongoEvent.getGameRoom());
 			return loggedOutOpenByLeftEvent;
 		}
+		else if(clazz.equals("LoggedOutWatcherLeftLastEvent")){
+			LoggedOutWatcherLeftLastMongoEvent loggedOutWatcherLeftLastMongoEvent = (LoggedOutWatcherLeftLastMongoEvent)mongoEvent;
+			LoggedOutWatcherLeftLastEvent loggedOutWatcherLeftLastEvent = new LoggedOutWatcherLeftLastEvent(uuid, loggedOutWatcherLeftLastMongoEvent.getServiceId(), loggedOutWatcherLeftLastMongoEvent.getEventId(), loggedOutWatcherLeftLastMongoEvent.getArrived(), "LoggedOutWatcherLeftLastEvent", loggedOutWatcherLeftLastMongoEvent.getWatcher(), loggedOutWatcherLeftLastMongoEvent.getGameRoom());
+			return loggedOutWatcherLeftLastEvent;
+		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}	
+	}
 }
 
 
