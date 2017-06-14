@@ -25,6 +25,7 @@ import org.moshe.arad.kafka.events.NewUserCreatedEvent;
 import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.OpenByLeftBeforeGameStartedEvent;
 import org.moshe.arad.kafka.events.OpenByLeftEvent;
+import org.moshe.arad.kafka.events.OpenByLeftFirstEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
@@ -50,6 +51,7 @@ import org.moshe.arad.mongo.events.NewGameRoomOpenedMongoEvent;
 import org.moshe.arad.mongo.events.NewUserCreatedMongoEvent;
 import org.moshe.arad.mongo.events.NewUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.OpenByLeftBeforeGameStartedMongoEvent;
+import org.moshe.arad.mongo.events.OpenByLeftFirstMongoEvent;
 import org.moshe.arad.mongo.events.OpenByLeftMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
@@ -391,6 +393,19 @@ public class MongoEventsStore {
 		}
 	}
 	
+	public void addOpenByLeftFirstEvent(OpenByLeftFirstEvent openByLeftFirstEvent) {
+		try{
+			OpenByLeftFirstMongoEvent mongoEvent = OpenByLeftFirstMongoEvent.convertIntoMongoEvent(openByLeftFirstEvent);
+			
+			mongoTemplate.insert(mongoEvent, "OpenByLeftFirstEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save OpenByLeftFirstEvents into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -416,6 +431,7 @@ public class MongoEventsStore {
 		LinkedList<OpenByLeftMongoEvent> openByLeftMongoEvents = null;
 		LinkedList<WatcherLeftLastMongoEvent> watcherLeftLastMongoEvents = null;
 		LinkedList<WatcherLeftMongoEvent> watcherLeftMongoEvents = null;
+		LinkedList<OpenByLeftFirstMongoEvent> openByLeftFirstMongoEvents = null;
 		
 		ArrayList<IMongoEvent> mongoEvents = new ArrayList<>(100000);
 		LinkedList<BackgammonEvent> result = new LinkedList<>();
@@ -448,6 +464,7 @@ public class MongoEventsStore {
 				openByLeftMongoEvents = new LinkedList<>(mongoTemplate.findAll(OpenByLeftMongoEvent.class));
 				watcherLeftLastMongoEvents = new LinkedList<>(mongoTemplate.findAll(WatcherLeftLastMongoEvent.class));
 				watcherLeftMongoEvents = new LinkedList<>(mongoTemplate.findAll(WatcherLeftMongoEvent.class));
+				openByLeftFirstMongoEvents = new LinkedList<>(mongoTemplate.findAll(OpenByLeftFirstMongoEvent.class));
 			}					
 		}
 		else{
@@ -481,6 +498,7 @@ public class MongoEventsStore {
 				openByLeftMongoEvents = new LinkedList<>(mongoTemplate.find(query, OpenByLeftMongoEvent.class));
 				watcherLeftLastMongoEvents = new LinkedList<>(mongoTemplate.find(query, WatcherLeftLastMongoEvent.class));
 				watcherLeftMongoEvents = new LinkedList<>(mongoTemplate.find(query, WatcherLeftMongoEvent.class));
+				openByLeftFirstMongoEvents = new LinkedList<>(mongoTemplate.find(query, OpenByLeftFirstMongoEvent.class));
 			}				
 		}
 		
@@ -511,6 +529,7 @@ public class MongoEventsStore {
 			mongoEvents.addAll(openByLeftMongoEvents);
 			mongoEvents.addAll(watcherLeftLastMongoEvents);
 			mongoEvents.addAll(watcherLeftMongoEvents);
+			mongoEvents.addAll(openByLeftFirstMongoEvents);
 		}
 			
 		ListIterator<IMongoEvent> it = mongoEvents.listIterator();
@@ -648,6 +667,11 @@ public class MongoEventsStore {
 			WatcherLeftMongoEvent watcherLeftMongoEvent = (WatcherLeftMongoEvent)mongoEvent;
 			WatcherLeftEvent watcherLeftEvent = new WatcherLeftEvent(uuid, watcherLeftMongoEvent.getServiceId(), watcherLeftMongoEvent.getEventId(), watcherLeftMongoEvent.getArrived(), "WatcherLeftEvent", watcherLeftMongoEvent.getWatcher(), watcherLeftMongoEvent.getGameRoom());
 			return watcherLeftEvent;
+		}
+		else if(clazz.equals("OpenByLeftFirstEvent")){
+			OpenByLeftFirstMongoEvent openByLeftFirstMongoEvent = (OpenByLeftFirstMongoEvent)mongoEvent;
+			OpenByLeftFirstEvent openByLeftFirstEvent = new OpenByLeftFirstEvent(uuid, openByLeftFirstMongoEvent.getServiceId(), openByLeftFirstMongoEvent.getEventId(), openByLeftFirstMongoEvent.getArrived(), "OpenByLeftFirstEvent", openByLeftFirstMongoEvent.getOpenBy(), openByLeftFirstMongoEvent.getGameRoom());
+			return openByLeftFirstEvent;
 		}
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
