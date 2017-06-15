@@ -34,6 +34,7 @@ import org.moshe.arad.kafka.consumers.config.OpenByLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.OpenByLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfig;
+import org.moshe.arad.kafka.consumers.config.SecondLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.SecondLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
@@ -58,6 +59,7 @@ import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutWatc
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftBeforeGameStartedEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftFirstEventConfig;
+import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedSecondLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedSecondLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftLastEventConfig;
@@ -85,6 +87,7 @@ import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftBeforeGameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftFirstEventConsumer;
+import org.moshe.arad.kafka.consumers.events.SecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
@@ -107,6 +110,7 @@ import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedLoggedOutWatc
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedOpenByLeftBeforeGameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedOpenByLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedOpenByLeftFirstEventConsumer;
+import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedSecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedSecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedWatcherLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedWatcherLeftLastEventConsumer;
@@ -122,6 +126,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.base.GeneratorBase;
 
 @Component
 public class AppInit implements ApplicationContextAware, IAppInitializer {
@@ -395,6 +401,16 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserPermissionsUpdatedSecondLeftFirstEventConfig userPermissionsUpdatedSecondLeftFirstEventConfig;
 	
+	private SecondLeftEventConsumer secondLeftEventConsumer;
+	
+	@Autowired
+	private SecondLeftEventConfig secondLeftEventConfig;
+	
+	private UserPermissionsUpdatedSecondLeftEventConsumer userPermissionsUpdatedSecondLeftEventConsumer;
+	
+	@Autowired
+	private UserPermissionsUpdatedSecondLeftEventConfig userPermissionsUpdatedSecondLeftEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -592,6 +608,12 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userPermissionsUpdatedSecondLeftFirstEventConsumer = context.getBean(UserPermissionsUpdatedSecondLeftFirstEventConsumer.class);
 			initSingleConsumer(userPermissionsUpdatedSecondLeftFirstEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_SECOND_LEFT_FIRST_EVENT_TOPIC, userPermissionsUpdatedSecondLeftFirstEventConfig, null);
 			
+			secondLeftEventConsumer = context.getBean(SecondLeftEventConsumer.class);
+			initSingleConsumer(secondLeftEventConsumer, KafkaUtils.SECOND_LEFT_EVENT_TOPIC, secondLeftEventConfig, null);
+			
+			userPermissionsUpdatedSecondLeftEventConsumer = context.getBean(UserPermissionsUpdatedSecondLeftEventConsumer.class);
+			initSingleConsumer(userPermissionsUpdatedSecondLeftEventConsumer, KafkaUtils.USER_PERMISSIONS_UPDATED_SECOND_LEFT_EVENT_TOPIC, userPermissionsUpdatedSecondLeftEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -640,7 +662,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					openByLeftFirstEventConsumer,
 					userPermissionsUpdatedOpenByLeftFirstEventConsumer,
 					secondLeftFirstEventConsumer,
-					userPermissionsUpdatedSecondLeftFirstEventConsumer));
+					userPermissionsUpdatedSecondLeftFirstEventConsumer,
+					secondLeftEventConsumer,
+					userPermissionsUpdatedSecondLeftEventConsumer));
 		}
 	}
 
