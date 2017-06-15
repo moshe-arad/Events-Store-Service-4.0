@@ -129,4 +129,10 @@ public class KafkaUtils {
 	public static final String SECOND_LEFT_EVENT_TOPIC = "Second-Left-Event";
 	public static final String USER_PERMISSIONS_UPDATED_SECOND_LEFT_EVENT_GROUP = "UserPermissionsUpdatedSecondLeftEventGroup1";
 	public static final String USER_PERMISSIONS_UPDATED_SECOND_LEFT_EVENT_TOPIC = "User-Permissions-Updated-Second-Left-Event";
+	public static final String OPENBY_LEFT_LAST_EVENT_GROUP = "OpenbyLeftLastEventGroup1";
+	public static final String OPENBY_LEFT_LAST_EVENT_TOPIC = "Openby-Left-Last-Event";
+	public static final String USER_PERMISSIONS_UPDATED_OPENBY_LEFT_LAST_EVENT_GROUP = "UserPermissionsUpdatedOpenbyLeftLastEventGroup1";
+	public static final String USER_PERMISSIONS_UPDATED_OPENBY_LEFT_LAST_EVENT_TOPIC = "User-Permissions-Updated-Openby-Left-Last-Event";
+	public static final String GAME_ROOM_CLOSED_OPENBY_LEFT_LAST_EVENT_GROUP = "GameRoomClosedOpenbyLeftLastEventGroup1";
+	public static final String GAME_ROOM_CLOSED_OPENBY_LEFT_LAST_EVENT_TOPIC = "Game-Room-Closed-Openby-Left-Last-Event";
 }
