@@ -11,6 +11,8 @@ import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.GameRoomClosedEvent;
+import org.moshe.arad.kafka.events.GameStartedEvent;
+import org.moshe.arad.kafka.events.InitGameRoomCompletedEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.LoggedOutOpenByLeftBeforeGameStartedEvent;
@@ -41,7 +43,9 @@ import org.moshe.arad.kafka.events.WatcherLeftEvent;
 import org.moshe.arad.kafka.events.WatcherLeftLastEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
+import org.moshe.arad.mongo.events.GameStartedMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
+import org.moshe.arad.mongo.events.InitGameRoomCompletedMongoEvent;
 import org.moshe.arad.mongo.events.LoggedInMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutOpenByLeftBeforeGameStartedMongoEvent;
@@ -466,6 +470,34 @@ public class MongoEventsStore {
 		}
 	}
 	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addGameStartedEvent(GameStartedEvent gameStartedEvent) {
+		try{
+			GameStartedMongoEvent mongoEvent = GameStartedMongoEvent.convertIntoMongoEvent(gameStartedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "GameStartedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save GameStartedMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}	
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addInitGameRoomCompletedEvent(InitGameRoomCompletedEvent initGameRoomCompletedEvent) {
+		try{
+			InitGameRoomCompletedMongoEvent mongoEvent = InitGameRoomCompletedMongoEvent.convertIntoMongoEvent(initGameRoomCompletedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "InitGameRoomCompletedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save InitGameRoomCompletedMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -772,7 +804,7 @@ public class MongoEventsStore {
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}			
+	}		
 }
 
 
