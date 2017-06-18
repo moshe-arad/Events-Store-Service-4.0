@@ -10,6 +10,7 @@ import org.moshe.arad.kafka.KafkaUtils;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
+import org.moshe.arad.kafka.consumers.config.DiceRolledEventConfig;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutOpenByLeftLastEventConfig;
@@ -20,6 +21,7 @@ import org.moshe.arad.kafka.consumers.config.GameRoomClosedOpenByLeftLastEventCo
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedSecondLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedWatcherLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameStartedEventConfig;
+import org.moshe.arad.kafka.consumers.config.InitDiceCompletedEventConfig;
 import org.moshe.arad.kafka.consumers.config.InitGameRoomCompletedEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
@@ -39,6 +41,7 @@ import org.moshe.arad.kafka.consumers.config.OpenByLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.OpenByLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfig;
+import org.moshe.arad.kafka.consumers.config.RollDiceGameRoomFoundEventConfig;
 import org.moshe.arad.kafka.consumers.config.SecondLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.SecondLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.SecondLeftLastEventConfig;
@@ -73,6 +76,7 @@ import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftEv
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.WatcherLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.WatcherLeftLastEventConfig;
+import org.moshe.arad.kafka.consumers.events.DiceRolledEventConsumer;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedLoggedOutOpenByLeftLastEventConsumer;
@@ -83,6 +87,7 @@ import org.moshe.arad.kafka.consumers.events.GameRoomClosedOpenByLeftLastEventCo
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedSecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedWatcherLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameStartedEventConsumer;
+import org.moshe.arad.kafka.consumers.events.InitDiceCompletedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.InitGameRoomCompletedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
@@ -100,6 +105,7 @@ import org.moshe.arad.kafka.consumers.events.OpenByLeftBeforeGameStartedEventCon
 import org.moshe.arad.kafka.consumers.events.OpenByLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftLastEventConsumer;
+import org.moshe.arad.kafka.consumers.events.RollDiceGameRoomFoundEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
@@ -467,6 +473,21 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private GameStartedEventConfig gameStartedEventConfig;
 	
+	private InitDiceCompletedEventConsumer initDiceCompletedEventConsumer;
+	
+	@Autowired
+	private InitDiceCompletedEventConfig initDiceCompletedEventConfig;
+	
+	private RollDiceGameRoomFoundEventConsumer rollDiceGameRoomFoundEventConsumer;
+	
+	@Autowired
+	private RollDiceGameRoomFoundEventConfig rollDiceGameRoomFoundEventConfig;
+	
+	private DiceRolledEventConsumer diceRolledEventConsumer;
+	
+	@Autowired
+	private DiceRolledEventConfig diceRolledEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -694,6 +715,15 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			gameStartedEventConsumer = context.getBean(GameStartedEventConsumer.class);
 			initSingleConsumer(gameStartedEventConsumer, KafkaUtils.GAME_STARTED_EVENT_TOPIC, gameStartedEventConfig, null);
 			
+			initDiceCompletedEventConsumer = context.getBean(InitDiceCompletedEventConsumer.class);
+			initSingleConsumer(initDiceCompletedEventConsumer, KafkaUtils.INIT_DICE_COMPLETED_EVENT_TOPIC, initDiceCompletedEventConfig, null);
+			
+			rollDiceGameRoomFoundEventConsumer = context.getBean(RollDiceGameRoomFoundEventConsumer.class);
+			initSingleConsumer(rollDiceGameRoomFoundEventConsumer, KafkaUtils.ROLL_DICE_GAME_ROOM_FOUND_EVENT_TOPIC, rollDiceGameRoomFoundEventConfig, null);
+			
+			diceRolledEventConsumer = context.getBean(DiceRolledEventConsumer.class);
+			initSingleConsumer(diceRolledEventConsumer, KafkaUtils.DICE_ROLLED_EVENT_TOPIC, diceRolledEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -752,7 +782,10 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					userPermissionsUpdatedSecondLeftLastEventConsumer,
 					gameRoomClosedSecondLeftLastEventConsumer,
 					initGameRoomCompletedEventConsumer,
-					gameStartedEventConsumer));
+					gameStartedEventConsumer,
+					initDiceCompletedEventConsumer,
+					rollDiceGameRoomFoundEventConsumer,
+					diceRolledEventConsumer));
 		}
 	}
 
