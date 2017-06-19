@@ -141,4 +141,14 @@ public class KafkaUtils {
 	public static final String USER_PERMISSIONS_UPDATED_SECOND_LEFT_LAST_EVENT_TOPIC = "User-Permissions-Updated-Second-Left-Last-Event";
 	public static final String GAME_ROOM_CLOSED_SECOND_LEFT_LAST_EVENT_GROUP = "GameRoomClosedSecondLeftLastEventGroup1";
 	public static final String GAME_ROOM_CLOSED_SECOND_LEFT_LAST_EVENT_TOPIC = "Game-Room-Closed-Second-Left-Last-Event";
+	public static final String INIT_GAME_ROOM_COMPLETED_EVENT_GROUP = "InitGameRoomCompletedEventGroup1";
+	public static final String INIT_GAME_ROOM_COMPLETED_EVENT_TOPIC = "Init-Game-Room-Completed-Event";
+	public static final String GAME_STARTED_EVENT_GROUP = "GameStartedEventGroup1";
+	public static final String GAME_STARTED_EVENT_TOPIC = "Game-Started-Event";
+	public static final String INIT_DICE_COMPLETED_EVENT_GROUP = "InitDiceCompletedEventGroup1";
+	public static final String INIT_DICE_COMPLETED_EVENT_TOPIC = "Init-Dice-Completed-Event";
+	public static final String ROLL_DICE_GAME_ROOM_FOUND_EVENT_GROUP = "RollDiceGameRoomFoundEventGroup1";
+	public static final String ROLL_DICE_GAME_ROOM_FOUND_EVENT_TOPIC = "Roll-Dice-Game-Room-Found-Event";
+	public static final String DICE_ROLLED_EVENT_GROUP = "DiceRolledEventGroup1";
+	public static final String DICE_ROLLED_EVENT_TOPIC = "Dice-Rolled-Event";
 }

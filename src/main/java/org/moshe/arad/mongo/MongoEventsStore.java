@@ -8,9 +8,13 @@ import java.util.UUID;
 
 import org.moshe.arad.kafka.Services;
 import org.moshe.arad.kafka.events.BackgammonEvent;
+import org.moshe.arad.kafka.events.DiceRolledEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.GameRoomClosedEvent;
+import org.moshe.arad.kafka.events.GameStartedEvent;
+import org.moshe.arad.kafka.events.InitDiceCompletedEvent;
+import org.moshe.arad.kafka.events.InitGameRoomCompletedEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
 import org.moshe.arad.kafka.events.LoggedOutEvent;
 import org.moshe.arad.kafka.events.LoggedOutOpenByLeftBeforeGameStartedEvent;
@@ -27,6 +31,7 @@ import org.moshe.arad.kafka.events.OpenByLeftBeforeGameStartedEvent;
 import org.moshe.arad.kafka.events.OpenByLeftEvent;
 import org.moshe.arad.kafka.events.OpenByLeftFirstEvent;
 import org.moshe.arad.kafka.events.OpenByLeftLastEvent;
+import org.moshe.arad.kafka.events.RollDiceGameRoomFoundEvent;
 import org.moshe.arad.kafka.events.SecondLeftEvent;
 import org.moshe.arad.kafka.events.SecondLeftFirstEvent;
 import org.moshe.arad.kafka.events.SecondLeftLastEvent;
@@ -39,9 +44,13 @@ import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.kafka.events.WatcherLeftEvent;
 import org.moshe.arad.kafka.events.WatcherLeftLastEvent;
+import org.moshe.arad.mongo.events.DiceRolledMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
+import org.moshe.arad.mongo.events.GameStartedMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
+import org.moshe.arad.mongo.events.InitDiceCompletedMongoEvent;
+import org.moshe.arad.mongo.events.InitGameRoomCompletedMongoEvent;
 import org.moshe.arad.mongo.events.LoggedInMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutOpenByLeftBeforeGameStartedMongoEvent;
@@ -58,6 +67,7 @@ import org.moshe.arad.mongo.events.OpenByLeftBeforeGameStartedMongoEvent;
 import org.moshe.arad.mongo.events.OpenByLeftFirstMongoEvent;
 import org.moshe.arad.mongo.events.OpenByLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.OpenByLeftMongoEvent;
+import org.moshe.arad.mongo.events.RollDiceGameRoomFoundMongoEvent;
 import org.moshe.arad.mongo.events.SecondLeftFirstMongoEvent;
 import org.moshe.arad.mongo.events.SecondLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.SecondLeftMongoEvent;
@@ -466,6 +476,76 @@ public class MongoEventsStore {
 		}
 	}
 	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addGameStartedEvent(GameStartedEvent gameStartedEvent) {
+		try{
+			GameStartedMongoEvent mongoEvent = GameStartedMongoEvent.convertIntoMongoEvent(gameStartedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "GameStartedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save GameStartedMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}	
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addInitGameRoomCompletedEvent(InitGameRoomCompletedEvent initGameRoomCompletedEvent) {
+		try{
+			InitGameRoomCompletedMongoEvent mongoEvent = InitGameRoomCompletedMongoEvent.convertIntoMongoEvent(initGameRoomCompletedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "InitGameRoomCompletedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save InitGameRoomCompletedMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addInitDiceCompletedEvent(InitDiceCompletedEvent initDiceCompletedEvent) {
+		try{
+			InitDiceCompletedMongoEvent mongoEvent = InitDiceCompletedMongoEvent.convertIntoMongoEvent(initDiceCompletedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "InitDiceCompletedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save InitGameRoomCompletedMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addRollDiceGameRoomFoundEvent(RollDiceGameRoomFoundEvent rollDiceGameRoomFoundEvent) {
+		try{
+			RollDiceGameRoomFoundMongoEvent mongoEvent = RollDiceGameRoomFoundMongoEvent.convertIntoMongoEvent(rollDiceGameRoomFoundEvent);
+			
+			mongoTemplate.insert(mongoEvent, "RollDiceGameRoomFoundEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save RollDiceGameRoomFoundEvents into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addDiceRolledEvent(DiceRolledEvent diceRolledEvent) {
+		try{
+			DiceRolledMongoEvent mongoEvent = DiceRolledMongoEvent.convertIntoMongoEvent(diceRolledEvent);
+			
+			mongoTemplate.insert(mongoEvent, "DiceRolledEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save DiceRolledEvents into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}	
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -772,7 +852,7 @@ public class MongoEventsStore {
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}			
+	}	
 }
 
 
