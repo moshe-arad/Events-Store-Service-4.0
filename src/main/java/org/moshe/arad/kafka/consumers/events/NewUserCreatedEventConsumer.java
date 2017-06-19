@@ -32,7 +32,7 @@ public class NewUserCreatedEventConsumer extends SimpleEventsConsumer {
     		NewUserCreatedEvent newUserCreatedEvent = convertJsonBlobIntoEvent(record.value());    		
     		logger.info("New User Created Event record recieved, " + record.value());	             
         	logger.info("Event recieved, try to put it in events store...");	                
-        	mongoEventsStore.addNewEvent(newUserCreatedEvent);
+        	mongoEventsStore.addNewUserCreatedEvent(newUserCreatedEvent);
         	logger.info("Event saved into events store successfully...");
     	}
 		catch (Exception ex) {
