@@ -1,25 +1,27 @@
 package org.moshe.arad.kafka.events;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.moshe.arad.entities.BackgammonUser;
 
 public class NewUserCreatedEvent extends BackgammonEvent {
 
-	BackgammonUser backgammonUser;
+	BackgammonUser backgammonUser;	
+
+	public NewUserCreatedEvent() {
+	}
 	
-	public NewUserCreatedEvent(int serviceId, String serviceName, int entityId, String entityType, int eventId,
-			String eventType, BackgammonUser backgammonUser) {
-		super(serviceId, serviceName, entityId, entityType, eventId, eventType);
+	public NewUserCreatedEvent(UUID uuid, int serviceId, int eventId, Date arrived, String clazz,
+			BackgammonUser backgammonUser) {
+		super(uuid, serviceId, eventId, arrived, clazz);
 		this.backgammonUser = backgammonUser;
 	}
 
-	public NewUserCreatedEvent(int serviceId, String serviceName, int entityId, String entityType, int eventId,
-			String eventType, BackgammonUser backgammonUser, Date arrived) {
-		super(serviceId, serviceName, entityId, entityType, eventId, eventType, arrived);
+	public NewUserCreatedEvent(BackgammonUser backgammonUser) {
+		super();
 		this.backgammonUser = backgammonUser;
 	}
-
 
 	public BackgammonUser getBackgammonUser() {
 		return backgammonUser;
@@ -27,5 +29,10 @@ public class NewUserCreatedEvent extends BackgammonEvent {
 
 	public void setBackgammonUser(BackgammonUser backgammonUser) {
 		this.backgammonUser = backgammonUser;
-	}	
+	}
+
+	@Override
+	public String toString() {
+		return "NewUserCreatedEvent [backgammonUser=" + backgammonUser + "]";
+	}
 }
