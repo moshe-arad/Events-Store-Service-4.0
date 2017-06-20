@@ -77,6 +77,7 @@ import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftEv
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.WatcherLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.WatcherLeftLastEventConfig;
+import org.moshe.arad.kafka.consumers.config.WhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.events.DiceRolledEventConsumer;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConsumer;
@@ -140,6 +141,7 @@ import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedWatcherLeftEv
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedWatcherLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WatcherLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WatcherLeftLastEventConsumer;
+import org.moshe.arad.kafka.consumers.events.WhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -495,6 +497,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserMadeInvalidMoveConfig userMadeInvalidMoveConfig;
 	
+	private WhitePawnCameBackEventConsumer whitePawnCameBackEventConsumer;
+	
+	@Autowired
+	private WhitePawnCameBackEventConfig whitePawnCameBackEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -734,6 +741,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userMadeInvalidMoveEventConsumer = context.getBean(UserMadeInvalidMoveEventConsumer.class);
 			initSingleConsumer(userMadeInvalidMoveEventConsumer, KafkaUtils.USER_MADE_INVALID_MOVE_EVENT_TOPIC, userMadeInvalidMoveConfig, null);
 			
+			whitePawnCameBackEventConsumer = context.getBean(WhitePawnCameBackEventConsumer.class);
+			initSingleConsumer(whitePawnCameBackEventConsumer, KafkaUtils.WHITE_PAWN_CAME_BACK_EVENT_TOPIC, whitePawnCameBackEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -796,7 +806,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					initDiceCompletedEventConsumer,
 					rollDiceGameRoomFoundEventConsumer,
 					diceRolledEventConsumer,
-					userMadeInvalidMoveEventConsumer));
+					userMadeInvalidMoveEventConsumer,
+					whitePawnCameBackEventConsumer));
 		}
 	}
 

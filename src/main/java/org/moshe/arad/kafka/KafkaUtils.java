@@ -153,4 +153,6 @@ public class KafkaUtils {
 	public static final String DICE_ROLLED_EVENT_TOPIC = "Dice-Rolled-Event";
 	public static final String USER_MADE_INVALID_MOVE_EVENT_GROUP = "UserMadeInvalidMoveEventGroup1";
 	public static final String USER_MADE_INVALID_MOVE_EVENT_TOPIC = "User-Made-Invalid-Move-Event";
+	public static final String WHITE_PAWN_CAME_BACK_EVENT_GROUP = "WhitePawnCameBackEventGroup1";
+	public static final String WHITE_PAWN_CAME_BACK_EVENT_TOPIC = "White-Pawn-Came-Back-Event";
 }

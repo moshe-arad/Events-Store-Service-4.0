@@ -45,6 +45,7 @@ import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.kafka.events.WatcherLeftEvent;
 import org.moshe.arad.kafka.events.WatcherLeftLastEvent;
+import org.moshe.arad.kafka.events.WhitePawnCameBackEvent;
 import org.moshe.arad.mongo.events.DiceRolledMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
@@ -81,6 +82,7 @@ import org.moshe.arad.mongo.events.LoggedOutWatcherLeftMongoEvent;
 import org.moshe.arad.mongo.events.UserPermissionsUpdatedMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftMongoEvent;
+import org.moshe.arad.mongo.events.WhitePawnCameBackMongoEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -556,11 +558,25 @@ public class MongoEventsStore {
 			mongoTemplate.insert(mongoEvent, "UserMadeInvalidMoveEvents");		
 		}
 		catch (Exception ex) {
-			logger.error("Failed to save DiceRolledEvents into mongo events store");
+			logger.error("Failed to save UserMadeInvalidMoveMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
 	}	
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addWhitePawnCameBackEvent(WhitePawnCameBackEvent whitePawnCameBackEvent) {
+		try{
+			WhitePawnCameBackMongoEvent mongoEvent = WhitePawnCameBackMongoEvent.convertIntoMongoEvent(whitePawnCameBackEvent);
+			
+			mongoTemplate.insert(mongoEvent, "WhitePawnCameBackEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save WhitePawnCameBackMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
 	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
