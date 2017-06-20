@@ -8,7 +8,9 @@ import java.util.UUID;
 
 import org.moshe.arad.kafka.Services;
 import org.moshe.arad.kafka.events.BackgammonEvent;
+import org.moshe.arad.kafka.events.BlackAteWhitePawnEvent;
 import org.moshe.arad.kafka.events.BlackPawnCameBackEvent;
+import org.moshe.arad.kafka.events.BlackPawnTakenOutEvent;
 import org.moshe.arad.kafka.events.DiceRolledEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
@@ -46,9 +48,12 @@ import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
 import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.kafka.events.WatcherLeftEvent;
 import org.moshe.arad.kafka.events.WatcherLeftLastEvent;
+import org.moshe.arad.kafka.events.WhiteAteBlackPawnEvent;
 import org.moshe.arad.kafka.events.WhitePawnCameBackEvent;
 import org.moshe.arad.kafka.events.WhitePawnTakenOutEvent;
+import org.moshe.arad.mongo.events.BlackAteWhitePawnMongoEvent;
 import org.moshe.arad.mongo.events.BlackPawnCameBackMongoEvent;
+import org.moshe.arad.mongo.events.BlackPawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.DiceRolledMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
@@ -85,6 +90,7 @@ import org.moshe.arad.mongo.events.LoggedOutWatcherLeftMongoEvent;
 import org.moshe.arad.mongo.events.UserPermissionsUpdatedMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftMongoEvent;
+import org.moshe.arad.mongo.events.WhiteAteBlackPawnMongoEvent;
 import org.moshe.arad.mongo.events.WhitePawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.WhitePawnTakenOutMongoEvent;
 import org.slf4j.Logger;
@@ -595,7 +601,7 @@ public class MongoEventsStore {
 			ex.printStackTrace();
 		}
 	}
-	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
 	public void addWhitePawnTakenOutEvent(WhitePawnTakenOutEvent whitePawnTakenOutEvent) {
 		try{
 			WhitePawnTakenOutMongoEvent mongoEvent = WhitePawnTakenOutMongoEvent.convertIntoMongoEvent(whitePawnTakenOutEvent);
@@ -604,6 +610,48 @@ public class MongoEventsStore {
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save WhitePawnTakenOutMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addBlackPawnTakenOutEvent(BlackPawnTakenOutEvent blackPawnTakenOutEvent) {
+		try{
+			BlackPawnTakenOutMongoEvent mongoEvent = BlackPawnTakenOutMongoEvent.convertIntoMongoEvent(blackPawnTakenOutEvent);
+			
+			mongoTemplate.insert(mongoEvent, "BlackPawnTakenOutEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save BlackPawnTakenOutMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addBlackAteWhitePawnEvent(BlackAteWhitePawnEvent blackAteWhitePawnEvent) {
+		try{
+			BlackAteWhitePawnMongoEvent mongoEvent = BlackAteWhitePawnMongoEvent.convertIntoMongoEvent(blackAteWhitePawnEvent);
+			
+			mongoTemplate.insert(mongoEvent, "BlackAteWhitePawnEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save BlackAteWhitePawnMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addWhiteAteBlackPawnEvent(WhiteAteBlackPawnEvent whiteAteBlackPawnEvent) {
+		try{
+			WhiteAteBlackPawnMongoEvent mongoEvent = WhiteAteBlackPawnMongoEvent.convertIntoMongoEvent(whiteAteBlackPawnEvent);
+			
+			mongoTemplate.insert(mongoEvent, "WhiteAteBlackPawnEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save WhiteAteBlackPawnMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
