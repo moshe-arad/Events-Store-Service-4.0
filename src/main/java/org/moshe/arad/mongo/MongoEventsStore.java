@@ -42,6 +42,7 @@ import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.kafka.events.UserMadeInvalidMoveEvent;
+import org.moshe.arad.kafka.events.UserMadeMoveEvent;
 import org.moshe.arad.kafka.events.LoggedOutUserLeftLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedOutWatcherLeftEvent;
 import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
@@ -84,6 +85,7 @@ import org.moshe.arad.mongo.events.SecondLeftMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
 import org.moshe.arad.mongo.events.UserMadeInvalidMoveMongoEvent;
+import org.moshe.arad.mongo.events.UserMadeMoveMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutUserLeftLobbyMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutWatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutWatcherLeftMongoEvent;
@@ -652,6 +654,20 @@ public class MongoEventsStore {
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save WhiteAteBlackPawnMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addUserMadeMoveEvent(UserMadeMoveEvent userMadeMoveEvent) {
+		try{
+			UserMadeMoveMongoEvent mongoEvent = UserMadeMoveMongoEvent.convertIntoMongoEvent(userMadeMoveEvent);
+			
+			mongoTemplate.insert(mongoEvent, "UserMadeMoveEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save UserMadeMoveMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}

@@ -53,6 +53,7 @@ import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingComma
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserMadeInvalidMoveConfig;
+import org.moshe.arad.kafka.consumers.config.UserMadeMoveConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftLastEventConfig;
@@ -122,6 +123,7 @@ import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserMadeInvalidMoveEventConsumer;
+import org.moshe.arad.kafka.consumers.events.UserMadeMoveEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftLastEventConsumer;
@@ -537,6 +539,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private WhiteAteBlackPawnEventConfig whiteAteBlackPawnEventConfig;
 	
+	private UserMadeMoveEventConsumer userMadeMoveEventConsumer;
+	
+	@Autowired
+	private UserMadeMoveConfig userMadeMoveConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -794,6 +801,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			whiteAteBlackPawnEventConsumer = context.getBean(WhiteAteBlackPawnEventConsumer.class);
 			initSingleConsumer(whiteAteBlackPawnEventConsumer, KafkaUtils.WHITE_ATE_BLACK_PAWN_EVENT_TOPIC, whiteAteBlackPawnEventConfig, null);
 			
+			userMadeMoveEventConsumer = context.getBean(UserMadeMoveEventConsumer.class);
+			initSingleConsumer(userMadeMoveEventConsumer, KafkaUtils.USER_MADE_MOVE_EVENT_TOPIC, userMadeMoveConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -862,7 +872,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					whitePawnTakenOutEventConsumer,
 					blackPawnTakenOutEventConsumer,
 					blackAteWhitePawnEventConsumer,
-					whiteAteBlackPawnEventConsumer));
+					whiteAteBlackPawnEventConsumer,
+					userMadeMoveEventConsumer));
 		}
 	}
 
