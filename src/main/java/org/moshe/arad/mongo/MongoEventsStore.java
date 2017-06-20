@@ -38,6 +38,7 @@ import org.moshe.arad.kafka.events.SecondLeftLastEvent;
 import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
+import org.moshe.arad.kafka.events.UserMadeInvalidMoveEvent;
 import org.moshe.arad.kafka.events.LoggedOutUserLeftLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedOutWatcherLeftEvent;
 import org.moshe.arad.kafka.events.LoggedOutWatcherLeftLastEvent;
@@ -73,6 +74,7 @@ import org.moshe.arad.mongo.events.SecondLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.SecondLeftMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
+import org.moshe.arad.mongo.events.UserMadeInvalidMoveMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutUserLeftLobbyMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutWatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutWatcherLeftMongoEvent;
@@ -546,6 +548,20 @@ public class MongoEventsStore {
 		}
 	}	
 	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addUserMadeInvalidMoveEvent(UserMadeInvalidMoveEvent userMadeInvalidMoveEvent) {
+		try{
+			UserMadeInvalidMoveMongoEvent mongoEvent = UserMadeInvalidMoveMongoEvent.convertIntoMongoEvent(userMadeInvalidMoveEvent);
+			
+			mongoTemplate.insert(mongoEvent, "UserMadeInvalidMoveEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save DiceRolledEvents into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}	
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -852,7 +868,7 @@ public class MongoEventsStore {
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}	
+	}
 }
 
 

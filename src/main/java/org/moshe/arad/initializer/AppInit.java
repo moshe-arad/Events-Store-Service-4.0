@@ -49,6 +49,7 @@ import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
+import org.moshe.arad.kafka.consumers.config.UserMadeInvalidMoveConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftLastEventConfig;
@@ -111,6 +112,7 @@ import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
+import org.moshe.arad.kafka.consumers.events.UserMadeInvalidMoveEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftLastEventConsumer;
@@ -488,6 +490,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private DiceRolledEventConfig diceRolledEventConfig;
 	
+	private UserMadeInvalidMoveEventConsumer userMadeInvalidMoveEventConsumer;
+	
+	@Autowired
+	private UserMadeInvalidMoveConfig userMadeInvalidMoveConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -724,6 +731,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			diceRolledEventConsumer = context.getBean(DiceRolledEventConsumer.class);
 			initSingleConsumer(diceRolledEventConsumer, KafkaUtils.DICE_ROLLED_EVENT_TOPIC, diceRolledEventConfig, null);
 			
+			userMadeInvalidMoveEventConsumer = context.getBean(UserMadeInvalidMoveEventConsumer.class);
+			initSingleConsumer(userMadeInvalidMoveEventConsumer, KafkaUtils.USER_MADE_INVALID_MOVE_EVENT_TOPIC, userMadeInvalidMoveConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -785,7 +795,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					gameStartedEventConsumer,
 					initDiceCompletedEventConsumer,
 					rollDiceGameRoomFoundEventConsumer,
-					diceRolledEventConsumer));
+					diceRolledEventConsumer,
+					userMadeInvalidMoveEventConsumer));
 		}
 	}
 

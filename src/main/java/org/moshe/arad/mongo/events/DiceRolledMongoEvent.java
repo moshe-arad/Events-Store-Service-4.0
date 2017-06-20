@@ -3,22 +3,9 @@ package org.moshe.arad.mongo.events;
 import java.util.Date;
 import java.util.UUID;
 
-import org.moshe.arad.entities.BackgammonDice;
-import org.moshe.arad.entities.BackgammonUser;
 import org.moshe.arad.entities.GameRoom;
+import org.moshe.arad.entities.backgammon.instrument.BackgammonDice;
 import org.moshe.arad.kafka.events.DiceRolledEvent;
-import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
-import org.moshe.arad.kafka.events.InitDiceCompletedEvent;
-import org.moshe.arad.kafka.events.InitGameRoomCompletedEvent;
-import org.moshe.arad.kafka.events.LoggedInEvent;
-import org.moshe.arad.kafka.events.LoggedOutEvent;
-import org.moshe.arad.kafka.events.LoggedOutOpenByLeftEvent;
-import org.moshe.arad.kafka.events.LoggedOutOpenByLeftLastEvent;
-import org.moshe.arad.kafka.events.NewUserCreatedEvent;
-import org.moshe.arad.kafka.events.NewUserJoinedLobbyEvent;
-import org.moshe.arad.kafka.events.OpenByLeftLastEvent;
-import org.moshe.arad.kafka.events.RollDiceGameRoomFoundEvent;
-import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
