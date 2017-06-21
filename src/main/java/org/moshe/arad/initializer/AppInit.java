@@ -26,6 +26,7 @@ import org.moshe.arad.kafka.consumers.config.GameRoomClosedWatcherLeftLastEventC
 import org.moshe.arad.kafka.consumers.config.GameStartedEventConfig;
 import org.moshe.arad.kafka.consumers.config.InitDiceCompletedEventConfig;
 import org.moshe.arad.kafka.consumers.config.InitGameRoomCompletedEventConfig;
+import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftBeforeGameStartedEventConfig;
@@ -35,6 +36,9 @@ import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftLastEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
 import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
@@ -50,13 +54,11 @@ import org.moshe.arad.kafka.consumers.config.SecondLeftFirstEventConfig;
 import org.moshe.arad.kafka.consumers.config.SecondLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
+import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserMadeInvalidMoveConfig;
 import org.moshe.arad.kafka.consumers.config.UserMadeMoveConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedSecondPlayerEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedWatcherEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedEventConfig;
@@ -100,6 +102,7 @@ import org.moshe.arad.kafka.consumers.events.GameRoomClosedWatcherLeftLastEventC
 import org.moshe.arad.kafka.consumers.events.GameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.InitDiceCompletedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.InitGameRoomCompletedEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LastMoveWhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutOpenByLeftBeforeGameStartedEventConsumer;
@@ -109,6 +112,9 @@ import org.moshe.arad.kafka.consumers.events.LoggedOutOpenByLeftLastEventConsume
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftLastEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewGameRoomOpenedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserCreatedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
@@ -120,13 +126,11 @@ import org.moshe.arad.kafka.consumers.events.RollDiceGameRoomFoundEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
+import org.moshe.arad.kafka.consumers.events.TurnNotPassedWhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserMadeInvalidMoveEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserMadeMoveEventConsumer;
-import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
-import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftEventConsumer;
-import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedSecondPlayerEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedAddedWatcherEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserPermissionsUpdatedEventConsumer;
@@ -164,8 +168,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.base.GeneratorBase;
 
 @Component
 public class AppInit implements ApplicationContextAware, IAppInitializer {
@@ -544,6 +546,16 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private UserMadeMoveConfig userMadeMoveConfig;
 	
+	private LastMoveWhitePawnCameBackEventConsumer lastMoveWhitePawnCameBackEventConsumer;
+	
+	@Autowired
+	private LastMoveWhitePawnCameBackEventConfig lastMoveWhitePawnCameBackEventConfig;
+	
+	private TurnNotPassedWhitePawnCameBackEventConsumer turnNotPassedWhitePawnCameBackEventConsumer;
+	
+	@Autowired
+	private TurnNotPassedWhitePawnCameBackEventConfig turnNotPassedWhitePawnCameBackEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -804,6 +816,12 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			userMadeMoveEventConsumer = context.getBean(UserMadeMoveEventConsumer.class);
 			initSingleConsumer(userMadeMoveEventConsumer, KafkaUtils.USER_MADE_MOVE_EVENT_TOPIC, userMadeMoveConfig, null);
 			
+			lastMoveWhitePawnCameBackEventConsumer = context.getBean(LastMoveWhitePawnCameBackEventConsumer.class);
+			initSingleConsumer(lastMoveWhitePawnCameBackEventConsumer, KafkaUtils.LAST_MOVE_WHITE_PAWN_CAME_BACK_EVENT_TOPIC, lastMoveWhitePawnCameBackEventConfig, null);
+			
+			turnNotPassedWhitePawnCameBackEventConsumer = context.getBean(TurnNotPassedWhitePawnCameBackEventConsumer.class);
+			initSingleConsumer(turnNotPassedWhitePawnCameBackEventConsumer, KafkaUtils.TURN_NOT_PASSED_WHITE_PAWN_CAME_BACK_EVENT_TOPIC, turnNotPassedWhitePawnCameBackEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -873,7 +891,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					blackPawnTakenOutEventConsumer,
 					blackAteWhitePawnEventConsumer,
 					whiteAteBlackPawnEventConsumer,
-					userMadeMoveEventConsumer));
+					userMadeMoveEventConsumer,
+					lastMoveWhitePawnCameBackEventConsumer,
+					turnNotPassedWhitePawnCameBackEventConsumer));
 		}
 	}
 
