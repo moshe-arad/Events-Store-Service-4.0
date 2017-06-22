@@ -27,6 +27,7 @@ import org.moshe.arad.kafka.consumers.config.GameStartedEventConfig;
 import org.moshe.arad.kafka.consumers.config.InitDiceCompletedEventConfig;
 import org.moshe.arad.kafka.consumers.config.InitGameRoomCompletedEventConfig;
 import org.moshe.arad.kafka.consumers.config.LastMoveBlackPawnCameBackEventConfig;
+import org.moshe.arad.kafka.consumers.config.LastMoveBlackPawnTakenOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnTakenOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
@@ -57,6 +58,7 @@ import org.moshe.arad.kafka.consumers.config.SecondLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
 import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
 import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackPawnCameBackEventConfig;
+import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackPawnTakenOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnTakenOutEventConfig;
 import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
@@ -107,6 +109,7 @@ import org.moshe.arad.kafka.consumers.events.GameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.InitDiceCompletedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.InitGameRoomCompletedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LastMoveBlackPawnCameBackEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LastMoveBlackPawnTakenOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LastMoveWhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LastMoveWhitePawnTakenOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedInEventConsumer;
@@ -133,6 +136,7 @@ import org.moshe.arad.kafka.consumers.events.SecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.TurnNotPassedBlackPawnCameBackEventConsumer;
+import org.moshe.arad.kafka.consumers.events.TurnNotPassedBlackPawnTakenOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.TurnNotPassedWhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.TurnNotPassedWhitePawnTakenOutEventConsumer;
 import org.moshe.arad.kafka.consumers.events.UserAddedAsSecondPlayerEventConsumer;
@@ -584,6 +588,16 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private TurnNotPassedWhitePawnTakenOutEventConfig turnNotPassedWhitePawnTakenOutEventConfig;
 	
+	private LastMoveBlackPawnTakenOutEventConsumer lastMoveBlackPawnTakenOutEventConsumer;
+	
+	@Autowired
+	private LastMoveBlackPawnTakenOutEventConfig lastMoveBlackPawnTakenOutEventConfig;
+	
+	private TurnNotPassedBlackPawnTakenOutEventConsumer turnNotPassedBlackPawnTakenOutEventConsumer;
+	
+	@Autowired
+	private TurnNotPassedBlackPawnTakenOutEventConfig turnNotPassedBlackPawnTakenOutEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -862,6 +876,12 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			turnNotPassedWhitePawnTakenOutEventConsumer = context.getBean(TurnNotPassedWhitePawnTakenOutEventConsumer.class);
 			initSingleConsumer(turnNotPassedWhitePawnTakenOutEventConsumer, KafkaUtils.TURN_NOT_PASSED_WHITE_PAWN_TAKEN_OUT_EVENT_TOPIC, turnNotPassedWhitePawnTakenOutEventConfig, null);
 			
+			lastMoveBlackPawnTakenOutEventConsumer = context.getBean(LastMoveBlackPawnTakenOutEventConsumer.class);
+			initSingleConsumer(lastMoveBlackPawnTakenOutEventConsumer, KafkaUtils.LAST_MOVE_BLACK_PAWN_TAKEN_OUT_EVENT_TOPIC, lastMoveBlackPawnTakenOutEventConfig, null);
+			
+			turnNotPassedBlackPawnTakenOutEventConsumer = context.getBean(TurnNotPassedBlackPawnTakenOutEventConsumer.class);
+			initSingleConsumer(turnNotPassedBlackPawnTakenOutEventConsumer, KafkaUtils.TURN_NOT_PASSED_BLACK_PAWN_TAKEN_OUT_EVENT_TOPIC, turnNotPassedBlackPawnTakenOutEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -937,7 +957,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					lastMoveBlackPawnCameBackEventConsumer,
 					turnNotPassedBlackPawnCameBackEventConsumer,
 					lastMoveWhitePawnTakenOutEventConsumer,
-					turnNotPassedWhitePawnTakenOutEventConsumer));
+					turnNotPassedWhitePawnTakenOutEventConsumer,
+					lastMoveBlackPawnTakenOutEventConsumer,
+					turnNotPassedBlackPawnTakenOutEventConsumer));
 		}
 	}
 

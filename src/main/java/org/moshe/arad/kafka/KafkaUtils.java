@@ -179,4 +179,8 @@ public class KafkaUtils {
 	public static final String LAST_MOVE_WHITE_PAWN_TAKEN_OUT_EVENT_TOPIC = "Last-Move-White-Pawn-Taken-Out-Event";
 	public static final String TURN_NOT_PASSED_WHITE_PAWN_TAKEN_OUT_EVENT_GROUP = "TurnNotPassedWhitePawnTakenOutEventGroup1";
 	public static final String TURN_NOT_PASSED_WHITE_PAWN_TAKEN_OUT_EVENT_TOPIC = "Turn-Not-Passed-White-Pawn-Taken-Out-Event";
+	public static final String LAST_MOVE_BLACK_PAWN_TAKEN_OUT_EVENT_GROUP = "LastMoveBlackPawnTakenOutEventGroup1";
+	public static final String LAST_MOVE_BLACK_PAWN_TAKEN_OUT_EVENT_TOPIC = "Last-Move-Black-Pawn-Taken-Out-Event";
+	public static final String TURN_NOT_PASSED_BLACK_PAWN_TAKEN_OUT_EVENT_GROUP = "TurnNotPassedBlackPawnTakenOutEventGroup1";
+	public static final String TURN_NOT_PASSED_BLACK_PAWN_TAKEN_OUT_EVENT_TOPIC = "Turn-Not-Passed-Black-Pawn-Taken-Out-Event";
 }
