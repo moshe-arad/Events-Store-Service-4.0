@@ -48,12 +48,14 @@ import org.moshe.arad.kafka.events.StartReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedBlackAteWhitePawnEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedBlackPawnCameBackEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedBlackPawnTakenOutEvent;
+import org.moshe.arad.kafka.events.TurnNotPassedUserMadeMoveEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhiteAteBlackPawnEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnCameBackEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnTakenOutEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
 import org.moshe.arad.kafka.events.UserAddedAsWatcherEvent;
 import org.moshe.arad.kafka.events.UserMadeInvalidMoveEvent;
+import org.moshe.arad.kafka.events.UserMadeLastMoveEvent;
 import org.moshe.arad.kafka.events.UserMadeMoveEvent;
 import org.moshe.arad.kafka.events.LoggedOutUserLeftLobbyEvent;
 import org.moshe.arad.kafka.events.LoggedOutWatcherLeftEvent;
@@ -103,12 +105,14 @@ import org.moshe.arad.mongo.events.SecondLeftMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedBlackAteWhitePawnMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedBlackPawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedBlackPawnTakenOutMongoEvent;
+import org.moshe.arad.mongo.events.TurnNotPassedUserMadeMoveMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhiteAteBlackPawnMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhitePawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhitePawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsWatcherMongoEvent;
 import org.moshe.arad.mongo.events.UserMadeInvalidMoveMongoEvent;
+import org.moshe.arad.mongo.events.UserMadeLastMoveMongoEvent;
 import org.moshe.arad.mongo.events.UserMadeMoveMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutUserLeftLobbyMongoEvent;
 import org.moshe.arad.mongo.events.LoggedOutWatcherLeftLastMongoEvent;
@@ -866,6 +870,34 @@ public class MongoEventsStore {
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save TurnNotPassedWhiteAteBlackPawnMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addUserMadeLastMoveEvent(UserMadeLastMoveEvent userMadeLastMoveEvent) {
+		try{
+			UserMadeLastMoveMongoEvent mongoEvent = UserMadeLastMoveMongoEvent.convertIntoMongoEvent(userMadeLastMoveEvent);
+			
+			mongoTemplate.insert(mongoEvent, "UserMadeLastMoveEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save UserMadeLastMoveMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addTurnNotPassedUserMadeMoveEvent(TurnNotPassedUserMadeMoveEvent turnNotPassedUserMadeMoveEvent) {
+		try{
+			TurnNotPassedUserMadeMoveMongoEvent mongoEvent = TurnNotPassedUserMadeMoveMongoEvent.convertIntoMongoEvent(turnNotPassedUserMadeMoveEvent);
+			
+			mongoTemplate.insert(mongoEvent, "TurnNotPassedUserMadeMoveEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save TurnNotPassedUserMadeMoveMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
