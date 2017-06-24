@@ -3,10 +3,9 @@ package org.moshe.arad.mongo.events;
 import java.util.Date;
 import java.util.UUID;
 
-import org.moshe.arad.entities.GameRoom;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonBoard;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonDice;
-import org.moshe.arad.kafka.events.DiceRolledEvent;
+import org.moshe.arad.entities.backgammon.json.BackgammonBoardJson;
 import org.moshe.arad.kafka.events.UserMadeInvalidMoveEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,7 +24,7 @@ public class UserMadeInvalidMoveMongoEvent implements IMongoEvent {
 	private String gameRoomName;
 	private int from;
 	private int to;
-	private BackgammonBoard board;
+	private BackgammonBoardJson backgammonBoardJson;
 	private BackgammonDice firstDice;
 	private BackgammonDice secondDice;
 	private boolean isWhite;
@@ -33,10 +32,11 @@ public class UserMadeInvalidMoveMongoEvent implements IMongoEvent {
 	public UserMadeInvalidMoveMongoEvent() {
 		
 	}
-
+	
 	public UserMadeInvalidMoveMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
-			String clazz, String userName, String gameRoomName, int from, int to, BackgammonBoard board,
-			BackgammonDice firstDice, BackgammonDice secondDice, boolean isWhite) {
+			String clazz, String userName, String gameRoomName, int from, int to,
+			BackgammonBoardJson backgammonBoardJson, BackgammonDice firstDice,
+			BackgammonDice secondDice, boolean isWhite) {
 		super();
 		this.mongoEventId = mongoEventId;
 		this.uuid = uuid;
@@ -48,19 +48,21 @@ public class UserMadeInvalidMoveMongoEvent implements IMongoEvent {
 		this.gameRoomName = gameRoomName;
 		this.from = from;
 		this.to = to;
-		this.board = board;
+		this.backgammonBoardJson = backgammonBoardJson;
 		this.firstDice = firstDice;
 		this.secondDice = secondDice;
 		this.isWhite = isWhite;
 	}
 
+
 	@Override
 	public String toString() {
 		return "UserMadeInvalidMoveMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId="
 				+ serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", userName="
-				+ userName + ", gameRoomName=" + gameRoomName + ", from=" + from + ", to=" + to + ", board=" + board
-				+ ", firstDice=" + firstDice + ", secondDice=" + secondDice + ", isWhite=" + isWhite + "]";
+				+ userName + ", gameRoomName=" + gameRoomName + ", from=" + from + ", to=" + to + ", firstDice="
+				+ firstDice + ", secondDice=" + secondDice + ", isWhite=" + isWhite + "]";
 	}
+
 
 	public static UserMadeInvalidMoveMongoEvent convertIntoMongoEvent(UserMadeInvalidMoveEvent event) {
 		UserMadeInvalidMoveMongoEvent userMadeInvalidMoveMongoEvent = new UserMadeInvalidMoveMongoEvent();
@@ -72,7 +74,7 @@ public class UserMadeInvalidMoveMongoEvent implements IMongoEvent {
 		userMadeInvalidMoveMongoEvent.setGameRoomName(event.getGameRoomName());
 		userMadeInvalidMoveMongoEvent.setFrom(event.getFrom());
 		userMadeInvalidMoveMongoEvent.setTo(event.getTo());
-		userMadeInvalidMoveMongoEvent.setBoard(event.getBoard());
+		userMadeInvalidMoveMongoEvent.setBackgammonBoardJson(event.getBackgammonBoardJson());
 		userMadeInvalidMoveMongoEvent.setFirstDice(event.getFirstDice());
 		userMadeInvalidMoveMongoEvent.setSecondDice(event.getSecondDice());
 		userMadeInvalidMoveMongoEvent.setWhite(event.isWhite());
@@ -154,12 +156,12 @@ public class UserMadeInvalidMoveMongoEvent implements IMongoEvent {
 		this.to = to;
 	}
 
-	public BackgammonBoard getBoard() {
-		return board;
+	public BackgammonBoardJson getBackgammonBoardJson() {
+		return backgammonBoardJson;
 	}
 
-	public void setBoard(BackgammonBoard board) {
-		this.board = board;
+	public void setBackgammonBoardJson(BackgammonBoardJson backgammonBoardJson) {
+		this.backgammonBoardJson = backgammonBoardJson;
 	}
 
 	public boolean isWhite() {

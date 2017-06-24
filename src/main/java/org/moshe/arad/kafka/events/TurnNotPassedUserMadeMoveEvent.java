@@ -2,6 +2,7 @@ package org.moshe.arad.kafka.events;
 
 import org.moshe.arad.entities.backgammon.instrument.BackgammonBoard;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonDice;
+import org.moshe.arad.entities.backgammon.json.BackgammonBoardJson;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ public class TurnNotPassedUserMadeMoveEvent extends BackgammonEvent{
 	private String gameRoomName;
 	private int from;
 	private int to;
-	private BackgammonBoard board;
+	private BackgammonBoardJson backgammonBoardJson;
 	private BackgammonDice firstDice;
 	private BackgammonDice secondDice;
 	private boolean isWhite;
@@ -21,15 +22,16 @@ public class TurnNotPassedUserMadeMoveEvent extends BackgammonEvent{
 	public TurnNotPassedUserMadeMoveEvent() {
 	
 	}
-
-	public TurnNotPassedUserMadeMoveEvent(String userName, String gameRoomName, int from, int to, BackgammonBoard board,
-			BackgammonDice firstDice, BackgammonDice secondDice, boolean isWhite) {
+	
+	public TurnNotPassedUserMadeMoveEvent(String userName, String gameRoomName, int from, int to,
+			BackgammonBoardJson backgammonBoardJson, BackgammonDice firstDice, BackgammonDice secondDice,
+			boolean isWhite) {
 		super();
 		this.userName = userName;
 		this.gameRoomName = gameRoomName;
 		this.from = from;
 		this.to = to;
-		this.board = board;
+		this.backgammonBoardJson = backgammonBoardJson;
 		this.firstDice = firstDice;
 		this.secondDice = secondDice;
 		this.isWhite = isWhite;
@@ -38,9 +40,10 @@ public class TurnNotPassedUserMadeMoveEvent extends BackgammonEvent{
 	@Override
 	public String toString() {
 		return "TurnNotPassedUserMadeMoveEvent [userName=" + userName + ", gameRoomName=" + gameRoomName + ", from="
-				+ from + ", to=" + to + ", board=" + board + ", firstDice=" + firstDice + ", secondDice=" + secondDice
-				+ ", isWhite=" + isWhite + "]";
+				+ from + ", to=" + to + ", backgammonBoardJson=" + backgammonBoardJson + ", firstDice=" + firstDice
+				+ ", secondDice=" + secondDice + ", isWhite=" + isWhite + "]";
 	}
+
 
 	public String getUserName() {
 		return userName;
@@ -73,13 +76,13 @@ public class TurnNotPassedUserMadeMoveEvent extends BackgammonEvent{
 	public void setTo(int to) {
 		this.to = to;
 	}
-
-	public BackgammonBoard getBoard() {
-		return board;
+	
+	public BackgammonBoardJson getBackgammonBoardJson() {
+		return backgammonBoardJson;
 	}
 
-	public void setBoard(BackgammonBoard board) {
-		this.board = board;
+	public void setBackgammonBoardJson(BackgammonBoardJson backgammonBoardJson) {
+		this.backgammonBoardJson = backgammonBoardJson;
 	}
 
 	public BackgammonDice getFirstDice() {

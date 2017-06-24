@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.moshe.arad.entities.backgammon.instrument.BackgammonBoard;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonDice;
+import org.moshe.arad.entities.backgammon.json.BackgammonBoardJson;
 import org.moshe.arad.kafka.events.LastMoveWhiteAteBlackPawnEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,7 +24,7 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 	private String gameRoomName;
 	private int from;
 	private int to;
-	private BackgammonBoard board;
+	private BackgammonBoardJson backgammonBoardJson;
 	private BackgammonDice firstDice;
 	private BackgammonDice secondDice;
 	private boolean isWhite;
@@ -33,8 +34,9 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 	}
 
 	public LastMoveWhiteAteBlackPawnMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
-			String clazz, String userName, String gameRoomName, int from, int to, BackgammonBoard board,
-			BackgammonDice firstDice, BackgammonDice secondDice, boolean isWhite) {
+			String clazz, String userName, String gameRoomName, int from, int to,
+			BackgammonBoardJson backgammonBoardJson, BackgammonDice firstDice, BackgammonDice secondDice,
+			boolean isWhite) {
 		super();
 		this.mongoEventId = mongoEventId;
 		this.uuid = uuid;
@@ -46,7 +48,7 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 		this.gameRoomName = gameRoomName;
 		this.from = from;
 		this.to = to;
-		this.board = board;
+		this.backgammonBoardJson = backgammonBoardJson;
 		this.firstDice = firstDice;
 		this.secondDice = secondDice;
 		this.isWhite = isWhite;
@@ -56,8 +58,9 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 	public String toString() {
 		return "LastMoveWhiteAteBlackPawnMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid + ", serviceId="
 				+ serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz + ", userName="
-				+ userName + ", gameRoomName=" + gameRoomName + ", from=" + from + ", to=" + to + ", board=" + board
-				+ ", firstDice=" + firstDice + ", secondDice=" + secondDice + ", isWhite=" + isWhite + "]";
+				+ userName + ", gameRoomName=" + gameRoomName + ", from=" + from + ", to=" + to
+				+ ", backgammonBoardJson=" + backgammonBoardJson + ", firstDice=" + firstDice + ", secondDice="
+				+ secondDice + ", isWhite=" + isWhite + "]";
 	}
 
 	public static LastMoveWhiteAteBlackPawnMongoEvent convertIntoMongoEvent(LastMoveWhiteAteBlackPawnEvent event) {
@@ -70,7 +73,7 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 		lastMoveWhiteAteBlackPawnMongoEvent.setGameRoomName(event.getGameRoomName());
 		lastMoveWhiteAteBlackPawnMongoEvent.setFrom(event.getFrom());
 		lastMoveWhiteAteBlackPawnMongoEvent.setTo(event.getTo());
-		lastMoveWhiteAteBlackPawnMongoEvent.setBoard(event.getBoard());
+		lastMoveWhiteAteBlackPawnMongoEvent.setBackgammonBoardJson(event.getBackgammonBoardJson());
 		lastMoveWhiteAteBlackPawnMongoEvent.setFirstDice(event.getFirstDice());
 		lastMoveWhiteAteBlackPawnMongoEvent.setSecondDice(event.getSecondDice());
 		lastMoveWhiteAteBlackPawnMongoEvent.setWhite(event.isWhite());
@@ -152,12 +155,12 @@ public class LastMoveWhiteAteBlackPawnMongoEvent implements IMongoEvent {
 		this.to = to;
 	}
 
-	public BackgammonBoard getBoard() {
-		return board;
+	public BackgammonBoardJson getBackgammonBoardJson() {
+		return backgammonBoardJson;
 	}
 
-	public void setBoard(BackgammonBoard board) {
-		this.board = board;
+	public void setBackgammonBoardJson(BackgammonBoardJson backgammonBoardJson) {
+		this.backgammonBoardJson = backgammonBoardJson;
 	}
 
 	public boolean isWhite() {

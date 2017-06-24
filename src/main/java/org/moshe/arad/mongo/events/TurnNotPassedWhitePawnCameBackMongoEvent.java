@@ -3,14 +3,10 @@ package org.moshe.arad.mongo.events;
 import java.util.Date;
 import java.util.UUID;
 
-import org.moshe.arad.entities.GameRoom;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonBoard;
 import org.moshe.arad.entities.backgammon.instrument.BackgammonDice;
-import org.moshe.arad.kafka.events.DiceRolledEvent;
-import org.moshe.arad.kafka.events.LastMoveWhitePawnCameBackEvent;
+import org.moshe.arad.entities.backgammon.json.BackgammonBoardJson;
 import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnCameBackEvent;
-import org.moshe.arad.kafka.events.UserMadeInvalidMoveEvent;
-import org.moshe.arad.kafka.events.WhitePawnCameBackEvent;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,7 +24,7 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 	private String gameRoomName;
 	private int from;
 	private int to;
-	private BackgammonBoard board;
+	private BackgammonBoardJson backgammonBoardJson;
 	private BackgammonDice firstDice;
 	private BackgammonDice secondDice;
 	private boolean isWhite;
@@ -37,9 +33,10 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 		
 	}
 
-	public TurnNotPassedWhitePawnCameBackMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId, Date arrived,
-			String clazz, String userName, String gameRoomName, int from, int to, BackgammonBoard board,
-			BackgammonDice firstDice, BackgammonDice secondDice, boolean isWhite) {
+	public TurnNotPassedWhitePawnCameBackMongoEvent(String mongoEventId, UUID uuid, int serviceId, int eventId,
+			Date arrived, String clazz, String userName, String gameRoomName, int from, int to,
+			BackgammonBoardJson backgammonBoardJson, BackgammonDice firstDice, BackgammonDice secondDice,
+			boolean isWhite) {
 		super();
 		this.mongoEventId = mongoEventId;
 		this.uuid = uuid;
@@ -51,7 +48,7 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 		this.gameRoomName = gameRoomName;
 		this.from = from;
 		this.to = to;
-		this.board = board;
+		this.backgammonBoardJson = backgammonBoardJson;
 		this.firstDice = firstDice;
 		this.secondDice = secondDice;
 		this.isWhite = isWhite;
@@ -62,8 +59,8 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 		return "TurnNotPassedWhitePawnCameBackMongoEvent [mongoEventId=" + mongoEventId + ", uuid=" + uuid
 				+ ", serviceId=" + serviceId + ", eventId=" + eventId + ", arrived=" + arrived + ", clazz=" + clazz
 				+ ", userName=" + userName + ", gameRoomName=" + gameRoomName + ", from=" + from + ", to=" + to
-				+ ", board=" + board + ", firstDice=" + firstDice + ", secondDice=" + secondDice + ", isWhite="
-				+ isWhite + "]";
+				+ ", backgammonBoardJson=" + backgammonBoardJson + ", firstDice=" + firstDice + ", secondDice="
+				+ secondDice + ", isWhite=" + isWhite + "]";
 	}
 
 	public static TurnNotPassedWhitePawnCameBackMongoEvent convertIntoMongoEvent(TurnNotPassedWhitePawnCameBackEvent event) {
@@ -76,7 +73,7 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 		turnNotPassedWhitePawnCameBackMongoEvent.setGameRoomName(event.getGameRoomName());
 		turnNotPassedWhitePawnCameBackMongoEvent.setFrom(event.getFrom());
 		turnNotPassedWhitePawnCameBackMongoEvent.setTo(event.getTo());
-		turnNotPassedWhitePawnCameBackMongoEvent.setBoard(event.getBoard());
+		turnNotPassedWhitePawnCameBackMongoEvent.setBackgammonBoardJson(event.getBackgammonBoardJson());
 		turnNotPassedWhitePawnCameBackMongoEvent.setFirstDice(event.getFirstDice());
 		turnNotPassedWhitePawnCameBackMongoEvent.setSecondDice(event.getSecondDice());
 		turnNotPassedWhitePawnCameBackMongoEvent.setWhite(event.isWhite());
@@ -158,12 +155,12 @@ public class TurnNotPassedWhitePawnCameBackMongoEvent implements IMongoEvent {
 		this.to = to;
 	}
 
-	public BackgammonBoard getBoard() {
-		return board;
+	public BackgammonBoardJson getBackgammonBoardJson() {
+		return backgammonBoardJson;
 	}
 
-	public void setBoard(BackgammonBoard board) {
-		this.board = board;
+	public void setBackgammonBoardJson(BackgammonBoardJson backgammonBoardJson) {
+		this.backgammonBoardJson = backgammonBoardJson;
 	}
 
 	public boolean isWhite() {
