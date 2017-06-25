@@ -64,6 +64,7 @@ import org.moshe.arad.kafka.events.UserPermissionsUpdatedEvent;
 import org.moshe.arad.kafka.events.WatcherLeftEvent;
 import org.moshe.arad.kafka.events.WatcherLeftLastEvent;
 import org.moshe.arad.kafka.events.WhiteAteBlackPawnEvent;
+import org.moshe.arad.kafka.events.WhitePawnCameBackAndAteBlackPawnEvent;
 import org.moshe.arad.kafka.events.WhitePawnCameBackEvent;
 import org.moshe.arad.kafka.events.WhitePawnTakenOutEvent;
 import org.moshe.arad.mongo.events.BlackAteWhitePawnMongoEvent;
@@ -121,6 +122,7 @@ import org.moshe.arad.mongo.events.UserPermissionsUpdatedMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftLastMongoEvent;
 import org.moshe.arad.mongo.events.WatcherLeftMongoEvent;
 import org.moshe.arad.mongo.events.WhiteAteBlackPawnMongoEvent;
+import org.moshe.arad.mongo.events.WhitePawnCameBackAndAteBlackPawnMongoEvent;
 import org.moshe.arad.mongo.events.WhitePawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.WhitePawnTakenOutMongoEvent;
 import org.slf4j.Logger;
@@ -898,6 +900,21 @@ public class MongoEventsStore {
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save TurnNotPassedUserMadeMoveMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addWhitePawnCameBackAndAteBlackPawnEvent(
+			WhitePawnCameBackAndAteBlackPawnEvent whitePawnCameBackAndAteBlackPawnEvent) {
+		try{
+			WhitePawnCameBackAndAteBlackPawnMongoEvent mongoEvent = WhitePawnCameBackAndAteBlackPawnMongoEvent.convertIntoMongoEvent(whitePawnCameBackAndAteBlackPawnEvent);
+			
+			mongoTemplate.insert(mongoEvent, "WhitePawnCameBackAndAteBlackPawnEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save WhitePawnCameBackAndAteBlackPawnMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
