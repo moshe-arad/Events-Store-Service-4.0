@@ -22,6 +22,7 @@ import org.moshe.arad.kafka.events.LastMoveBlackAteWhitePawnEvent;
 import org.moshe.arad.kafka.events.LastMoveBlackPawnCameBackEvent;
 import org.moshe.arad.kafka.events.LastMoveBlackPawnTakenOutEvent;
 import org.moshe.arad.kafka.events.LastMoveWhiteAteBlackPawnEvent;
+import org.moshe.arad.kafka.events.LastMoveWhitePawnCameBackAndAteBlackPawnEvent;
 import org.moshe.arad.kafka.events.LastMoveWhitePawnCameBackEvent;
 import org.moshe.arad.kafka.events.LastMoveWhitePawnTakenOutEvent;
 import org.moshe.arad.kafka.events.LoggedInEvent;
@@ -50,6 +51,7 @@ import org.moshe.arad.kafka.events.TurnNotPassedBlackPawnCameBackEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedBlackPawnTakenOutEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedUserMadeMoveEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhiteAteBlackPawnEvent;
+import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnCameBackAndAteBlackPawnEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnCameBackEvent;
 import org.moshe.arad.kafka.events.TurnNotPassedWhitePawnTakenOutEvent;
 import org.moshe.arad.kafka.events.UserAddedAsSecondPlayerEvent;
@@ -81,6 +83,7 @@ import org.moshe.arad.mongo.events.LastMoveBlackAteWhitePawnMongoEvent;
 import org.moshe.arad.mongo.events.LastMoveBlackPawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.LastMoveBlackPawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.LastMoveWhiteAteBlackPawnMongoEvent;
+import org.moshe.arad.mongo.events.LastMoveWhitePawnCameBackAndAteBlackPawnMongoEvent;
 import org.moshe.arad.mongo.events.LastMoveWhitePawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.LastMoveWhitePawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.LoggedInMongoEvent;
@@ -108,6 +111,7 @@ import org.moshe.arad.mongo.events.TurnNotPassedBlackPawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedBlackPawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedUserMadeMoveMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhiteAteBlackPawnMongoEvent;
+import org.moshe.arad.mongo.events.TurnNotPassedWhitePawnCameBackAndAteBlackPawnMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhitePawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.TurnNotPassedWhitePawnTakenOutMongoEvent;
 import org.moshe.arad.mongo.events.UserAddedAsSecondPlayerMongoEvent;
@@ -920,6 +924,36 @@ public class MongoEventsStore {
 		}
 	}
 	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addLastMoveWhitePawnCameBackAndAteBlackPawnEvent(
+			LastMoveWhitePawnCameBackAndAteBlackPawnEvent lastMoveWhitePawnCameBackAndAteBlackPawnEvent) {
+		try{
+			LastMoveWhitePawnCameBackAndAteBlackPawnMongoEvent mongoEvent = LastMoveWhitePawnCameBackAndAteBlackPawnMongoEvent.convertIntoMongoEvent(lastMoveWhitePawnCameBackAndAteBlackPawnEvent);
+			
+			mongoTemplate.insert(mongoEvent, "LastMoveWhitePawnCameBackAndAteBlackPawnEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save LastMoveWhitePawnCameBackAndAteBlackPawnMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addTurnNotPassedWhitePawnCameBackAndAteBlackPawnEvent(
+			TurnNotPassedWhitePawnCameBackAndAteBlackPawnEvent turnNotPassedWhitePawnCameBackAndAteBlackPawnEvent) {
+		try{
+			TurnNotPassedWhitePawnCameBackAndAteBlackPawnMongoEvent mongoEvent = TurnNotPassedWhitePawnCameBackAndAteBlackPawnMongoEvent.convertIntoMongoEvent(turnNotPassedWhitePawnCameBackAndAteBlackPawnEvent);
+			
+			mongoTemplate.insert(mongoEvent, "TurnNotPassedWhitePawnCameBackAndAteBlackPawnEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save TurnNotPassedWhitePawnCameBackAndAteBlackPawnMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}	
+	
 	public synchronized LinkedList<BackgammonEvent> getEventsOccuredFrom(UUID uuid, Date fromDate, String serviceName){
 		LinkedList<NewUserCreatedMongoEvent> newUserCreatedMongoEvents = null;
 		LinkedList<NewUserJoinedLobbyMongoEvent> newUserJoinedLobbyMongoEvents = null;
@@ -1226,7 +1260,7 @@ public class MongoEventsStore {
 		else{
 			throw new RuntimeException("Failed to convert mongo event....");
 		}
-	}	
+	}
 }
 
 
