@@ -14,6 +14,7 @@ import org.moshe.arad.kafka.consumers.config.BlackAteWhitePawnEventConfig;
 import org.moshe.arad.kafka.consumers.config.BlackPawnCameBackAndAteWhitePawnEventConfig;
 import org.moshe.arad.kafka.consumers.config.BlackPawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.BlackPawnTakenOutEventConfig;
+import org.moshe.arad.kafka.consumers.config.DiceRolledCanNotPlayEventConfig;
 import org.moshe.arad.kafka.consumers.config.DiceRolledEventConfig;
 import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConfig;
@@ -108,6 +109,7 @@ import org.moshe.arad.kafka.consumers.events.BlackAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackAndAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnTakenOutEventConsumer;
+import org.moshe.arad.kafka.consumers.events.DiceRolledCanNotPlayEventConsumer;
 import org.moshe.arad.kafka.consumers.events.DiceRolledEventConsumer;
 import org.moshe.arad.kafka.consumers.events.ExistingUserJoinedLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConsumer;
@@ -682,6 +684,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private TurnNotPassedBlackPawnCameBackAndAteWhitePawnEventConfig turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConfig;
 	
+	private DiceRolledCanNotPlayEventConsumer diceRolledCanNotPlayEventConsumer;
+	
+	@Autowired
+	private DiceRolledCanNotPlayEventConfig diceRolledCanNotPlayEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -1002,6 +1009,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer = context.getBean(TurnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer.class);
 			initSingleConsumer(turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer, KafkaUtils.TURN_NOT_PASSED_BLACK_PAWN_CAME_BACK_AND_ATE_WHITE_PAWN_EVENT_TOPIC, turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConfig, null);
 			
+			diceRolledCanNotPlayEventConsumer = context.getBean(DiceRolledCanNotPlayEventConsumer.class);
+			initSingleConsumer(diceRolledCanNotPlayEventConsumer, KafkaUtils.DICE_ROLLED_CAN_NOT_PLAY_EVENT_TOPIC, diceRolledCanNotPlayEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -1091,7 +1101,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					turnNotPassedWhitePawnCameBackAndAteBlackPawnEventConsumer,
 					blackPawnCameBackAndAteWhitePawnEventConsumer,
 					lastMoveBlackPawnCameBackAndAteWhitePawnEventConsumer,
-					turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer));
+					turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer,
+					diceRolledCanNotPlayEventConsumer));
 		}
 	}
 

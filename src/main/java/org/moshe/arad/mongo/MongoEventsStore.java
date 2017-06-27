@@ -12,6 +12,7 @@ import org.moshe.arad.kafka.events.BlackAteWhitePawnEvent;
 import org.moshe.arad.kafka.events.BlackPawnCameBackAndAteWhitePawnEvent;
 import org.moshe.arad.kafka.events.BlackPawnCameBackEvent;
 import org.moshe.arad.kafka.events.BlackPawnTakenOutEvent;
+import org.moshe.arad.kafka.events.DiceRolledCanNotPlayEvent;
 import org.moshe.arad.kafka.events.DiceRolledEvent;
 import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
@@ -76,6 +77,7 @@ import org.moshe.arad.mongo.events.BlackAteWhitePawnMongoEvent;
 import org.moshe.arad.mongo.events.BlackPawnCameBackAndAteWhitePawnMongoEvent;
 import org.moshe.arad.mongo.events.BlackPawnCameBackMongoEvent;
 import org.moshe.arad.mongo.events.BlackPawnTakenOutMongoEvent;
+import org.moshe.arad.mongo.events.DiceRolledCanNotPlayMongoEvent;
 import org.moshe.arad.mongo.events.DiceRolledMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
@@ -601,6 +603,20 @@ public class MongoEventsStore {
 			ex.printStackTrace();
 		}
 	}	
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addDiceRolledCanNotPlayEvent(DiceRolledCanNotPlayEvent diceRolledCanNotPlayEvent) {
+		try{
+			DiceRolledCanNotPlayMongoEvent mongoEvent = DiceRolledCanNotPlayMongoEvent.convertIntoMongoEvent(diceRolledCanNotPlayEvent);
+			
+			mongoTemplate.insert(mongoEvent, "DiceRolledCanNotPlayEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save DiceRolledCanNotPlayMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
 	
 	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
 	public void addUserMadeInvalidMoveEvent(UserMadeInvalidMoveEvent userMadeInvalidMoveEvent) {
