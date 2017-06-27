@@ -105,6 +105,7 @@ import org.moshe.arad.kafka.consumers.config.WhiteAteBlackPawnEventConfig;
 import org.moshe.arad.kafka.consumers.config.WhitePawnCameBackAndAteBlackPawnEventConfig;
 import org.moshe.arad.kafka.consumers.config.WhitePawnCameBackEventConfig;
 import org.moshe.arad.kafka.consumers.config.WhitePawnTakenOutEventConfig;
+import org.moshe.arad.kafka.consumers.config.WinnerMoveMadeEventConfig;
 import org.moshe.arad.kafka.consumers.events.BlackAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackAndAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackEventConsumer;
@@ -196,6 +197,7 @@ import org.moshe.arad.kafka.consumers.events.WhiteAteBlackPawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WhitePawnCameBackAndAteBlackPawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WhitePawnCameBackEventConsumer;
 import org.moshe.arad.kafka.consumers.events.WhitePawnTakenOutEventConsumer;
+import org.moshe.arad.kafka.consumers.events.WinnerMoveMadeEventConsumer;
 import org.moshe.arad.kafka.events.BackgammonEvent;
 import org.moshe.arad.kafka.producers.ISimpleProducer;
 import org.moshe.arad.kafka.producers.events.SimpleEventsProducer;
@@ -689,6 +691,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private DiceRolledCanNotPlayEventConfig diceRolledCanNotPlayEventConfig;
 	
+	private WinnerMoveMadeEventConsumer winnerMoveMadeEventConsumer;
+	
+	@Autowired
+	private WinnerMoveMadeEventConfig winnerMoveMadeEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -1012,6 +1019,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			diceRolledCanNotPlayEventConsumer = context.getBean(DiceRolledCanNotPlayEventConsumer.class);
 			initSingleConsumer(diceRolledCanNotPlayEventConsumer, KafkaUtils.DICE_ROLLED_CAN_NOT_PLAY_EVENT_TOPIC, diceRolledCanNotPlayEventConfig, null);
 			
+			winnerMoveMadeEventConsumer = context.getBean(WinnerMoveMadeEventConsumer.class);
+			initSingleConsumer(winnerMoveMadeEventConsumer, KafkaUtils.WINNER_MOVE_MADE_EVENT_TOPIC, winnerMoveMadeEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -1102,7 +1112,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					blackPawnCameBackAndAteWhitePawnEventConsumer,
 					lastMoveBlackPawnCameBackAndAteWhitePawnEventConsumer,
 					turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer,
-					diceRolledCanNotPlayEventConsumer));
+					diceRolledCanNotPlayEventConsumer,
+					winnerMoveMadeEventConsumer));
 		}
 	}
 
