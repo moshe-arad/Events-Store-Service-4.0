@@ -18,6 +18,7 @@ import org.moshe.arad.kafka.events.EndReadEventsFromMongoEvent;
 import org.moshe.arad.kafka.events.ExistingUserJoinedLobbyEvent;
 import org.moshe.arad.kafka.events.GameRoomClosedEvent;
 import org.moshe.arad.kafka.events.GameStartedEvent;
+import org.moshe.arad.kafka.events.GameStoppedEvent;
 import org.moshe.arad.kafka.events.InitDiceCompletedEvent;
 import org.moshe.arad.kafka.events.InitGameRoomCompletedEvent;
 import org.moshe.arad.kafka.events.LastMoveBlackAteWhitePawnEvent;
@@ -83,6 +84,7 @@ import org.moshe.arad.mongo.events.DiceRolledMongoEvent;
 import org.moshe.arad.mongo.events.ExistingUserJoinedLobbyMongoEvent;
 import org.moshe.arad.mongo.events.GameRoomClosedMongoEvent;
 import org.moshe.arad.mongo.events.GameStartedMongoEvent;
+import org.moshe.arad.mongo.events.GameStoppedMongoEvent;
 import org.moshe.arad.mongo.events.IMongoEvent;
 import org.moshe.arad.mongo.events.InitDiceCompletedMongoEvent;
 import org.moshe.arad.mongo.events.InitGameRoomCompletedMongoEvent;
@@ -1032,6 +1034,20 @@ public class MongoEventsStore {
 		}
 		catch (Exception ex) {
 			logger.error("Failed to save WinnerMoveMadeMongoEvent into mongo events store");
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
+		}
+	}
+	
+	//TODO to add this event to code below, a.k.a, handle pull without saving in game service
+	public void addGameStoppedEvent(GameStoppedEvent gameStoppedEvent) {
+		try{
+			GameStoppedMongoEvent mongoEvent = GameStoppedMongoEvent.convertIntoMongoEvent(gameStoppedEvent);
+			
+			mongoTemplate.insert(mongoEvent, "GameStoppedEvents");		
+		}
+		catch (Exception ex) {
+			logger.error("Failed to save GameStoppedMongoEvent into mongo events store");
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 		}
