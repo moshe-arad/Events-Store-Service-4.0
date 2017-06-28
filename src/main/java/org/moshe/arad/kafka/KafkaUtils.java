@@ -213,4 +213,6 @@ public class KafkaUtils {
 	public static final String WINNER_MOVE_MADE_EVENT_TOPIC = "Winner-Move-Made-Event";
 	public static final String LOGGED_OUT_OPENBY_LEFT_FIRST_GAME_STOPPED_EVENT_GROUP = "LoggedOutOpenbyLeftFirstGameStoppedEventGroup1";
 	public static final String LOGGED_OUT_OPENBY_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC = "Logged-Out-Openby-Left-First-Game-Stopped-Event";
+	public static final String LOGGED_OUT_SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_GROUP = "LoggedOutSecondLeftFirstGameStoppedEventGroup1";
+	public static final String LOGGED_OUT_SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC = "Logged-Out-Second-Left-First-Game-Stopped-Event";
 }

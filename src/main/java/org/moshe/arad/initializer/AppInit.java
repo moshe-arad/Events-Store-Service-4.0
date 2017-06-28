@@ -45,6 +45,7 @@ import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftFirstGameStopped
 import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftFirstEventConfig;
+import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftFirstGameStoppedEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftLastEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
 import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
@@ -142,6 +143,7 @@ import org.moshe.arad.kafka.consumers.events.LoggedOutOpenByLeftFirstGameStopped
 import org.moshe.arad.kafka.consumers.events.LoggedOutOpenByLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftFirstEventConsumer;
+import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftFirstGameStoppedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutSecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutUserLeftLobbyEventConsumer;
 import org.moshe.arad.kafka.consumers.events.LoggedOutWatcherLeftEventConsumer;
@@ -703,6 +705,11 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private LoggedOutOpenByLeftFirstGameStoppedEventConfig loggedOutOpenByLeftFirstGameStoppedEventConfig;
 	
+	private LoggedOutSecondLeftFirstGameStoppedEventConsumer loggedOutSecondLeftFirstGameStoppedEventConsumer;
+	
+	@Autowired
+	private LoggedOutSecondLeftFirstGameStoppedEventConfig loggedOutSecondLeftFirstGameStoppedEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -1032,6 +1039,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			loggedOutOpenByLeftFirstGameStoppedEventConsumer = context.getBean(LoggedOutOpenByLeftFirstGameStoppedEventConsumer.class);
 			initSingleConsumer(loggedOutOpenByLeftFirstGameStoppedEventConsumer, KafkaUtils.LOGGED_OUT_OPENBY_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC, loggedOutOpenByLeftFirstGameStoppedEventConfig, null);
 			
+			loggedOutSecondLeftFirstGameStoppedEventConsumer = context.getBean(LoggedOutSecondLeftFirstGameStoppedEventConsumer.class);
+			initSingleConsumer(loggedOutSecondLeftFirstGameStoppedEventConsumer, KafkaUtils.LOGGED_OUT_SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC, loggedOutSecondLeftFirstGameStoppedEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -1124,7 +1134,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					turnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer,
 					diceRolledCanNotPlayEventConsumer,
 					winnerMoveMadeEventConsumer,
-					loggedOutOpenByLeftFirstGameStoppedEventConsumer));
+					loggedOutOpenByLeftFirstGameStoppedEventConsumer,
+					loggedOutSecondLeftFirstGameStoppedEventConsumer));
 		}
 	}
 
