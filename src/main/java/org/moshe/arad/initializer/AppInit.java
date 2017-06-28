@@ -10,104 +10,7 @@ import org.moshe.arad.kafka.KafkaUtils;
 import org.moshe.arad.kafka.consumers.ISimpleConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithSavingCommandsConsumer;
 import org.moshe.arad.kafka.consumers.commands.PullEventsWithoutSavingCommandsConsumer;
-import org.moshe.arad.kafka.consumers.config.BlackAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.BlackPawnCameBackAndAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.BlackPawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.BlackPawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.DiceRolledCanNotPlayEventConfig;
-import org.moshe.arad.kafka.consumers.config.DiceRolledEventConfig;
-import org.moshe.arad.kafka.consumers.config.ExistingUserJoinedLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutOpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutOpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutSecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedLoggedOutWatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedOpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedOpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedSecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameRoomClosedWatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.GameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.InitDiceCompletedEventConfig;
-import org.moshe.arad.kafka.consumers.config.InitGameRoomCompletedEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveBlackAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveBlackPawnCameBackAndAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveBlackPawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveBlackPawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveWhiteAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnCameBackAndAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.LastMoveWhitePawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedInEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftFirstGameStoppedEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutOpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftFirstGameStoppedEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutSecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutUserLeftLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.LoggedOutWatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.NewGameRoomOpenedEventConfig;
-import org.moshe.arad.kafka.consumers.config.NewUserCreatedEventConfig;
-import org.moshe.arad.kafka.consumers.config.NewUserJoinedLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.OpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.OpenByLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.OpenByLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.OpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.PullEventsWithSavingCommandConfig;
-import org.moshe.arad.kafka.consumers.config.PullEventsWithoutSavingCommandConfig;
-import org.moshe.arad.kafka.consumers.config.RollDiceGameRoomFoundEventConfig;
-import org.moshe.arad.kafka.consumers.config.SecondLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.SecondLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.SecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.SimpleConsumerConfig;
-import org.moshe.arad.kafka.consumers.config.ToLobbyPullEventsWithoutSavingCommandConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackPawnCameBackAndAteWhitePawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackPawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedBlackPawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedUserMadeMoveConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhiteAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnCameBackAndAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.TurnNotPassedWhitePawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserAddedAsSecondPlayerEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserAddedAsWatcherEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserMadeInvalidMoveConfig;
-import org.moshe.arad.kafka.consumers.config.UserMadeLastMoveConfig;
-import org.moshe.arad.kafka.consumers.config.UserMadeMoveConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedSecondPlayerEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedAddedWatcherEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLeftLobbyEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutOpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutOpenByLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutOpenByLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutOpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutSecondLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutSecondLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutSecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutWatcherLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedLoggedOutWatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftBeforeGameStartedEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedOpenByLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedSecondLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedSecondLeftFirstEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedSecondLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.UserPermissionsUpdatedWatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.WatcherLeftEventConfig;
-import org.moshe.arad.kafka.consumers.config.WatcherLeftLastEventConfig;
-import org.moshe.arad.kafka.consumers.config.WhiteAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.WhitePawnCameBackAndAteBlackPawnEventConfig;
-import org.moshe.arad.kafka.consumers.config.WhitePawnCameBackEventConfig;
-import org.moshe.arad.kafka.consumers.config.WhitePawnTakenOutEventConfig;
-import org.moshe.arad.kafka.consumers.config.WinnerMoveMadeEventConfig;
+import org.moshe.arad.kafka.consumers.config.*;
 import org.moshe.arad.kafka.consumers.events.BlackAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackAndAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.BlackPawnCameBackEventConsumer;
@@ -154,10 +57,12 @@ import org.moshe.arad.kafka.consumers.events.NewUserJoinedLobbyEventsConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftBeforeGameStartedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftFirstEventConsumer;
+import org.moshe.arad.kafka.consumers.events.OpenByLeftFirstGameStoppedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.OpenByLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.RollDiceGameRoomFoundEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftFirstEventConsumer;
+import org.moshe.arad.kafka.consumers.events.SecondLeftFirstGameStoppedEventConsumer;
 import org.moshe.arad.kafka.consumers.events.SecondLeftLastEventConsumer;
 import org.moshe.arad.kafka.consumers.events.TurnNotPassedBlackAteWhitePawnEventConsumer;
 import org.moshe.arad.kafka.consumers.events.TurnNotPassedBlackPawnCameBackAndAteWhitePawnEventConsumer;
@@ -710,6 +615,16 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private LoggedOutSecondLeftFirstGameStoppedEventConfig loggedOutSecondLeftFirstGameStoppedEventConfig;
 	
+	private OpenByLeftFirstGameStoppedEventConsumer openByLeftFirstGameStoppedEventConsumer;
+	
+	@Autowired
+	private OpenByLeftFirstGameStoppedEventConfig openByLeftFirstGameStoppedEventConfig;
+	
+	private SecondLeftFirstGameStoppedEventConsumer secondLeftFirstGameStoppedEventConsumer;
+	
+	@Autowired
+	private SecondLeftFirstGameStoppedEventConfig secondLeftFirstGameStoppedEventConfig;
+	
 	private ExecutorService executor = Executors.newFixedThreadPool(6);
 	
 	private Logger logger = LoggerFactory.getLogger(AppInit.class);
@@ -1042,6 +957,12 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			loggedOutSecondLeftFirstGameStoppedEventConsumer = context.getBean(LoggedOutSecondLeftFirstGameStoppedEventConsumer.class);
 			initSingleConsumer(loggedOutSecondLeftFirstGameStoppedEventConsumer, KafkaUtils.LOGGED_OUT_SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC, loggedOutSecondLeftFirstGameStoppedEventConfig, null);
 			
+			openByLeftFirstGameStoppedEventConsumer = context.getBean(OpenByLeftFirstGameStoppedEventConsumer.class);
+			initSingleConsumer(openByLeftFirstGameStoppedEventConsumer, KafkaUtils.OPENBY_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC, openByLeftFirstGameStoppedEventConfig, null);
+			
+			secondLeftFirstGameStoppedEventConsumer = context.getBean(SecondLeftFirstGameStoppedEventConsumer.class);
+			initSingleConsumer(secondLeftFirstGameStoppedEventConsumer, KafkaUtils.SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC, secondLeftFirstGameStoppedEventConfig, null);
+			
 			executeProducersAndConsumers(Arrays.asList(newUserCreatedEventConsumer, 
 					newUserJoinedLobbyEventConsumer, 
 					loggedInEventConsumer,
@@ -1135,7 +1056,9 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 					diceRolledCanNotPlayEventConsumer,
 					winnerMoveMadeEventConsumer,
 					loggedOutOpenByLeftFirstGameStoppedEventConsumer,
-					loggedOutSecondLeftFirstGameStoppedEventConsumer));
+					loggedOutSecondLeftFirstGameStoppedEventConsumer,
+					openByLeftFirstGameStoppedEventConsumer,
+					secondLeftFirstGameStoppedEventConsumer));
 		}
 	}
 
