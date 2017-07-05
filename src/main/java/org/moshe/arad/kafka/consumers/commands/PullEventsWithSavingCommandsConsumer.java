@@ -46,7 +46,7 @@ public class PullEventsWithSavingCommandsConsumer extends PullEventsCommandsCons
 
 
 	private void setServiceName(ConsumerRecord<String, String> record, PullEventsWithSavingCommand pullEventsWithSavingCommand) {
-		if(record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC) || record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC)) pullEventsWithSavingCommand.setServiceName(Services.Lobby.name());
+		if(record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC) || record.topic().equals(KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC)) pullEventsWithSavingCommand.setServiceName(Services.Lobby.name());
 		else if(record.topic().equals(KafkaUtils.PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC) || record.topic().equals(KafkaUtils.PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC)) pullEventsWithSavingCommand.setServiceName(Services.Users.name());
 	}
 }

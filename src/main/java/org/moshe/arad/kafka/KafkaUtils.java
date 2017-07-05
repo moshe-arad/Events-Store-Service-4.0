@@ -219,4 +219,5 @@ public class KafkaUtils {
 	public static final String OPENBY_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC = "Openby-Left-First-Game-Stopped-Event";
 	public static final String SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_GROUP = "SecondLeftFirstGameStoppedEventGroup1";
 	public static final String SECOND_LEFT_FIRST_GAME_STOPPED_EVENT_TOPIC = "Second-Left-First-Game-Stopped-Event";
+	public static final String TO_LOBBY_FROM_MONGO_EVENTS_WITH_SAVING_TOPIC = "To-Lobby-From-Mongo-Events-With-Saving";
 }

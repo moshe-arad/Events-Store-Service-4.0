@@ -131,22 +131,25 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private NewUserJoinedLobbyEventConfig newUserJoinedLobbyEventConfig;
 	
+	//*** begin to users with saving ****
 	private PullEventsWithSavingCommandsConsumer pullEventsWithSavingCommandsConsumer;	
 	
 	@Autowired
 	private PullEventsWithSavingCommandConfig pullEventsWithSavingCommandConfig;
 	
 	@Autowired
-	private PullEventsWithoutSavingCommandConfig pullEventsWithoutSavingCommandConfig;
-	
-	@Autowired
 	private SimpleEventsProducer<BackgammonEvent> fromMongoEventsWithSavingProducer;
+	//*** end to users without saving ****
+	
+	//*** begin to lobby with saving ****
+	private PullEventsWithSavingCommandsConsumer toLobbypullEventsWithSavingCommandsConsumer;	
 	
 	@Autowired
-	private SimpleEventsProducer<BackgammonEvent> fromMongoEventsWithoutSavingProducer;
+	private PullEventsWithSavingCommandConfig toLobbypullEventsWithSavingCommandConfig;
 	
 	@Autowired
-	private SimpleEventsProducer<BackgammonEvent> toLobbyfromMongoEventsWithoutSavingProducer;
+	private SimpleEventsProducer<BackgammonEvent> toLobbyfromMongoEventsWithSavingProducer;
+	//*** end to users with saving ****
 	
 	private LoggedInEventConsumer loggedInEventConsumer;
 	
@@ -158,12 +161,26 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	@Autowired
 	private ExistingUserJoinedLobbyEventConfig existingUserJoinedLobbyEventConfig;
 	
+	//*** begin to users without saving ****
 	private PullEventsWithoutSavingCommandsConsumer pullEventsWithoutSavingCommandsConsumer;
 	
+	@Autowired
+	private PullEventsWithoutSavingCommandConfig pullEventsWithoutSavingCommandConfig;
+	
+	@Autowired
+	private SimpleEventsProducer<BackgammonEvent> fromMongoEventsWithoutSavingProducer;
+	//*** end to users without saving ****
+	
+	//*** begin to lobby without saving ****
 	private PullEventsWithoutSavingCommandsConsumer toLobbyPullEventsWithoutSavingCommandsConsumer;
 	
 	@Autowired
 	private ToLobbyPullEventsWithoutSavingCommandConfig toLobbyPullEventsWithoutSavingCommandConfig;
+	
+	@Autowired
+	private SimpleEventsProducer<BackgammonEvent> toLobbyfromMongoEventsWithoutSavingProducer;
+	
+	//*** end to lobby without saving ****
 	
 	private NewGameRoomOpenedEventConsumer newGameRoomOpenedEventConsumer;
 	
@@ -635,6 +652,8 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 	
 	private ConsumerToProducerQueue toLobbypullEventsWithoutSavingQueue;
 	
+	private ConsumerToProducerQueue toLobbypullEventsWithSavingQueue;
+	
 	private ApplicationContext context;
 	
 	public static final int NUM_CONSUMERS = 3;
@@ -647,11 +666,13 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 		pullEventsWithSavingQueue = context.getBean(ConsumerToProducerQueue.class);
 		pullEventsWithoutSavingQueue = context.getBean(ConsumerToProducerQueue.class);
 		toLobbypullEventsWithoutSavingQueue = context.getBean(ConsumerToProducerQueue.class);
+		toLobbypullEventsWithSavingQueue = context.getBean(ConsumerToProducerQueue.class);
 		
 		for(int i=0; i<NUM_CONSUMERS; i++){
 			pullEventsWithSavingCommandsConsumer = context.getBean(PullEventsWithSavingCommandsConsumer.class);
 			pullEventsWithoutSavingCommandsConsumer = context.getBean(PullEventsWithoutSavingCommandsConsumer.class);
 			toLobbyPullEventsWithoutSavingCommandsConsumer = context.getBean(PullEventsWithoutSavingCommandsConsumer.class);
+			toLobbypullEventsWithSavingCommandsConsumer = context.getBean(PullEventsWithSavingCommandsConsumer.class);
 			
 			logger.info("Initializing pull events commands consumer...");
 			initSingleConsumer(pullEventsWithSavingCommandsConsumer, KafkaUtils.PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC, pullEventsWithSavingCommandConfig, pullEventsWithSavingQueue);
@@ -659,11 +680,14 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 			initSingleConsumer(pullEventsWithoutSavingCommandsConsumer, KafkaUtils.PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC, pullEventsWithoutSavingCommandConfig, pullEventsWithoutSavingQueue);
 			
 			initSingleConsumer(toLobbyPullEventsWithoutSavingCommandsConsumer, KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITHOUT_SAVING_COMMAND_TOPIC, toLobbyPullEventsWithoutSavingCommandConfig, toLobbypullEventsWithoutSavingQueue);
+			
+			initSingleConsumer(toLobbypullEventsWithSavingCommandsConsumer, KafkaUtils.LOBBY_SERVICE_PULL_EVENTS_WITH_SAVING_COMMAND_TOPIC, toLobbypullEventsWithSavingCommandConfig, toLobbypullEventsWithSavingQueue);
 			logger.info("Initializing pull events commands consumer...");
 			
 			executeProducersAndConsumers(Arrays.asList(pullEventsWithSavingCommandsConsumer, 
 					pullEventsWithoutSavingCommandsConsumer,
-					toLobbyPullEventsWithoutSavingCommandsConsumer));
+					toLobbyPullEventsWithoutSavingCommandsConsumer,
+					toLobbypullEventsWithSavingCommandsConsumer));
 		}
 	}
 
@@ -1075,9 +1099,15 @@ public class AppInit implements ApplicationContextAware, IAppInitializer {
 		initSingleProducer(fromMongoEventsWithoutSavingProducer, KafkaUtils.FROM_MONGO_EVENTS_WITHOUT_SAVING_TOPIC, pullEventsWithoutSavingQueue);
 		
 		initSingleProducer(toLobbyfromMongoEventsWithoutSavingProducer, KafkaUtils.TO_LOBBY_FROM_MONGO_EVENTS_WITHOUT_SAVING_TOPIC, toLobbypullEventsWithoutSavingQueue);
+		
+		initSingleProducer(toLobbyfromMongoEventsWithSavingProducer, KafkaUtils.TO_LOBBY_FROM_MONGO_EVENTS_WITH_SAVING_TOPIC, toLobbypullEventsWithSavingQueue);
+		
 		logger.info("Initialize from mongo to users service events producer, completed...");
 		
-		executeProducersAndConsumers(Arrays.asList(fromMongoEventsWithSavingProducer, fromMongoEventsWithoutSavingProducer, toLobbyfromMongoEventsWithoutSavingProducer));
+		executeProducersAndConsumers(Arrays.asList(fromMongoEventsWithSavingProducer, 
+				fromMongoEventsWithoutSavingProducer, 
+				toLobbyfromMongoEventsWithoutSavingProducer,
+				toLobbyfromMongoEventsWithSavingProducer));
 	}
 
 	@Override
